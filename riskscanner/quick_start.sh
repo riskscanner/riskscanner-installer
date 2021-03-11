@@ -8,11 +8,10 @@ else
   VERSION=$(curl -s https://github.com/RiskScanner/riskscanner/releases/latest/download 2>&1 | grep -Po '[0-9]+\.[0-9]+\.[0-9]+.*(?=")')
 fi
 
-wget --no-check-certificate https://github.com/RiskScanner/riskscanner/releases/latest/download/riskscanner-release-${VERSION}-offline.tar.gz
-#curl -s https://api.github.com/repos/RiskScanner/riskscanner/releases/latest | grep browser_download_url | grep online | cut -d '"' -f 4 | wget -qi -
+wget --no-check-certificate https://github.com/RiskScanner/riskscanner/releases/latest/download/riskscanner-release-${VERSION}.tar.gz
 
-tar zxvf riskscanner-release-${VERSION}-offline.tar.gz
+tar zxvf riskscanner-release-${VERSION}.tar.gz
 
-cd riskscanner-release-${VERSION}-offline/riskscanner
+cd riskscanner-release-${VERSION}/riskscanner
 
 /bin/bash install.sh
