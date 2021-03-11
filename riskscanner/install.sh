@@ -3,10 +3,44 @@ CURRENT_DIR=$(
    cd "$(dirname "$0")"
    pwd
 )
+
 os=`uname -a`
+red=31
+green=32
+yellow=33
+blue=34
+validationPassed=1
+
+function printLogo() {
+  echo -e "\033[$1m $2 \033[0m"
+}
+
+function printTitle() {
+  echo -e "\n\n**********\t ${1} \t**********\n"
+}
+
+function printSubTitle() {
+  echo -e "\033[${blue}m${1} \033[0m \t\n"
+}
+
 function log() {
    message="[RiskScanner Log]: $1 "
    echo -e "${message}" 2>&1 | tee -a ${CURRENT_DIR}/install.log
+}
+
+function colorMsg() {
+  echo -e "\033[$1m $2 \033[0m"
+}
+
+function checkPort() {
+  record=$(lsof -i:$1 | grep LISTEN | wc -l)
+  echo -ne "$1 端口 \t\t........................ "
+  if [ "$record" -eq "0" ]; then
+    colorMsg $green "[OK]"
+  else
+    validationPassed=0
+    colorMsg $red "[被占用]"
+  fi
 }
 
 args=$@
@@ -55,8 +89,97 @@ sed -i -e "s#RS_BASE=.*#RS_BASE=${RS_BASE}#g" rsctl
 cp rsctl /usr/local/bin && chmod +x /usr/local/bin/rsctl
 ln -s /usr/local/bin/rsctl /usr/bin/rsctl 2>/dev/null
 
+systemName=" RiskScanner 服务 "
+versionInfo=${RS_TAG}
+colorMsg $yellow "\n\n开始检测 $systemName，版本 - $versionInfo"
 
-echo -e "======================= 开始安装 =======================" 2>&1 | tee -a ${CURRENT_DIR}/install.log
+echo -e "\n"
+printLogo $green "██████╗ ██╗███████╗██╗  ██╗███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗  "
+printLogo $green "██╔══██╗██║██╔════╝██║ ██╔╝██╔════╝██╔════╝██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗ "
+printLogo $green "██████╔╝██║███████╗█████╔╝ ███████╗██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝ "
+printLogo $green "██╔══██╗██║╚════██║██╔═██╗ ╚════██║██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗ "
+printLogo $green "██║  ██║██║███████║██║  ██╗███████║╚██████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║ "
+printLogo $green "╚═╝  ╚═╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ "
+
+printTitle "${systemName} 安装环境检测"
+
+#root用户检测
+echo -ne "root 用户检测 \t\t........................ "
+isRoot=$(id -u -n | grep root | wc -l)
+if [ "x$isRoot" == "x1" ]; then
+  colorMsg $green "[OK]"
+else
+  colorMsg $red "[ERROR] 请用 root 用户执行安装脚本"
+  validationPassed=0
+fi
+
+#操作系统检测
+echo -ne "操作系统检测 \t\t........................ "
+if [ -f /etc/redhat-release ]; then
+  majorVersion=$(cat /etc/redhat-release | grep -oE '[0-9]+\.[0-9]+' | awk -F. '{print $1}')
+  if [ "x$majorVersion" == "x" ]; then
+    colorMsg $red "[ERROR] 操作系统类型版本不符合要求，请使用 CentOS 7.x, CentOS 8.x, RHEL 7.x 版本 64 位"
+    validationPassed=0
+  else
+    if [ "x$majorVersion" == "x7" ] || [ "x$majorVersion" == "x8" ]; then
+      is64bitArch=$(uname -m)
+      if [ "x$is64bitArch" == "xx86_64" ]; then
+        colorMsg $green "[OK]"
+      else
+        colorMsg $red "[ERROR] 操作系统必须是 64 位的，32 位的不支持"
+        validationPassed=0
+      fi
+    else
+      colorMsg $red "[ERROR] 操作系统类型版本不符合要求，请使用 CentOS 7.x, CentOS 8.x, RHEL 7.x 版本 64 位"
+      validationPassed=0
+    fi
+  fi
+else
+  colorMsg $red "[ERROR] 操作系统类型版本不符合要求，请使用 CentOS 7.x, CentOS 8.x, RHEL 7.x版本 64 位"
+  validationPassed=0
+fi
+
+#磁盘剩余空间检测
+echo -ne "磁盘剩余空间检测 \t........................ "
+path="/opt/riskscanner"
+
+IFSOld=$IFS
+IFS=$'\n'
+lines=$(df)
+for line in ${lines}; do
+  linePath=$(echo ${line} | awk -F' ' '{print $6}')
+  lineAvail=$(echo ${line} | awk -F' ' '{print $4}')
+  if [ "${linePath:0:1}" != "/" ]; then
+    continue
+  fi
+
+  if [ "${linePath}" == "/" ]; then
+    rootAvail=${lineAvail}
+    continue
+  fi
+
+  pathLength=${#path}
+  if [ "${linePath:0:${pathLength}}" == "${path}" ]; then
+    pathAvail=${lineAvail}
+    break
+  fi
+done
+IFS=$IFSOld
+
+if test -z "${pathAvail}"; then
+  pathAvail=${rootAvail}
+fi
+
+if [ $pathAvail -lt 1045 ]; then
+  colorMsg $red "[ERROR] 安装目录剩余空间小于 100G， 所在机器的安装目录可用空间需要至少 100G"
+  validationPassed=0
+else
+  colorMsg $green "[OK]"
+fi
+
+echo -e "\n"
+printSubTitle "=======================      开始安装      =======================" 2>&1 | tee -a ${CURRENT_DIR}/install.log
+echo -e "\n"
 
 echo "time: $(date)"
 
@@ -92,8 +215,6 @@ EOF
       service docker restart 2>&1 | tee -a ${CURRENT_DIR}/install.log
    fi
 
-
-
 ##Install Latest Stable Docker Compose Release
 if which docker-compose >/dev/null; then
    log "检测到 Docker Compose 已安装，跳过安装步骤"
@@ -113,7 +234,6 @@ fi
 
 cd ${RS_RUN_BASE}
 env | grep RS_ >.env
-
 
 if [ ${RS_EXTERNAL_MYSQL} = "false" ]; then
    mkdir -p ${RS_RUN_BASE}/data/mysql
@@ -143,31 +263,29 @@ log "配置 RiskScanner Service"
 chmod a+x /etc/init.d/riskscanner
 chkconfig --add riskscanner
 riskscannerService=`grep "service riskscanner start" /etc/rc.d/rc.local | wc -l`
+
 if [ "$riskscannerService" -eq 0 ]; then
    echo "sleep 10" >> /etc/rc.d/rc.local
    echo "service riskscanner start" >> /etc/rc.d/rc.local
 fi
-chmod +x /etc/rc.d/rc.local
-if [ `grep "vm.max_map_count" /etc/sysctl.conf | wc -l` -eq 0 ];then
-   sysctl -w vm.max_map_count=262144
-   echo "vm.max_map_count=262144" >> /etc/sysctl.conf
-fi
 
-if [ `grep "net.ipv4.ip_forward" /etc/sysctl.conf | wc -l` -eq 0 ];then
-   sysctl -w net.ipv4.ip_forward=1
-   echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+log "启动 RiskScanner 服务"
+rsctl reload
+if [ $? -eq 0 ]; then
+  echo -ne "启动  RackShift 服务 \t........................ "
+  colorMsg $green "[OK]"
 else
-   sed -i '/net.ipv4.ip_forward/ s/\(.*= \).*/\11/' /etc/sysctl.conf
+  echo -ne "启动  RackShift 服务 \t........................ "
+  colorMsg $red "[失败]"
+  exit 1
 fi
 
-
-
-log "启动服务"
 cd ${RS_RUN_BASE} && docker-compose $compose_files up -d 2>&1 | tee -a ${CURRENT_DIR}/install.log
 
 rsctl status 2>&1 | tee -a ${CURRENT_DIR}/install.log
 
-echo -e "======================= 安装完成 =======================\n" 2>&1 | tee -a ${CURRENT_DIR}/install.log
+echo -e "\n"
+printSubTitle "=======================      安装完成      =======================\n" 2>&1 | tee -a ${CURRENT_DIR}/install.log
 
 echo -e "请通过以下方式访问:\n URL: http://\$LOCAL_IP:${RS_PORT}\n 用户名: admin\n 初始密码: riskscanner" 2>&1 | tee -a ${CURRENT_DIR}/install.log
 echo -e "您可以使用命令 'rsctl status' 检查服务运行情况.\n" 2>&1 | tee -a ${CURRENT_DIR}/install.log-a ${CURRENT_DIR}/install.log
