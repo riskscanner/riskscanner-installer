@@ -13,6 +13,6 @@ wget --no-check-certificate https://github.com/RiskScanner/riskscanner/releases/
 
 tar zxvf riskscanner-release-${VERSION}-offline.tar.gz
 
-cd riskscanner-release-${VERSION}-offline/installer
+cd riskscanner-release-${VERSION}-offline/riskscanner
 
 /bin/bash install.sh
