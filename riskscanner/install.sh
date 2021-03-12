@@ -90,7 +90,7 @@ cp rsctl /usr/local/bin && chmod +x /usr/local/bin/rsctl
 ln -s /usr/local/bin/rsctl /usr/bin/rsctl 2>/dev/null
 
 systemName=" RiskScanner 服务 "
-versionInfo=${RS_TAG}
+versionInfo=$(cat ../riskscanner/templates/version)
 colorMsg $yellow "\n\n开始检测 $systemName，版本 -V$versionInfo"
 
 echo -e "\n"
