@@ -2,8 +2,7 @@
 os=$(uname -a)
 # 支持MacOS
 if [[ $os =~ 'Darwin' ]]; then
-  echo 暂时不支持 MacOS 安装
-  #VERSION=$(curl -s https://github.com/RiskScanner/riskscanner/releases/latest |grep -Eo 'v[0-9]+.[0-9]+.[0-9]+')
+  VERSION=$(curl -s https://github.com/RiskScanner/riskscanner/releases/latest |grep -Eo 'v[0-9]+.[0-9]+.[0-9]+')
 else
   VERSION=$(curl -s https://github.com/RiskScanner/riskscanner/releases/latest/download 2>&1 | grep -Po '[0-9]+\.[0-9]+\.[0-9]+.*(?=")')
 fi

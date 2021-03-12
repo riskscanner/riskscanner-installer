@@ -91,7 +91,7 @@ ln -s /usr/local/bin/rsctl /usr/bin/rsctl 2>/dev/null
 
 systemName=" RiskScanner 服务 "
 versionInfo=${RS_TAG}
-colorMsg $yellow "\n\n开始检测 $systemName，版本 - $versionInfo"
+colorMsg $yellow "\n\n开始检测 $systemName，版本 -V$versionInfo"
 
 echo -e "\n"
 printLogo $green "██████╗ ██╗███████╗██╗  ██╗███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗  "
@@ -113,31 +113,9 @@ else
   validationPassed=0
 fi
 
-#操作系统检测
+#操作系统检测 目前都支持
 echo -ne "操作系统检测 \t\t........................ "
-if [ -f /etc/redhat-release ]; then
-  majorVersion=$(cat /etc/redhat-release | grep -oE '[0-9]+\.[0-9]+' | awk -F. '{print $1}')
-  if [ "x$majorVersion" == "x" ]; then
-    colorMsg $red "[ERROR] 操作系统类型版本不符合要求，请使用 CentOS 7.x, CentOS 8.x, RHEL 7.x 版本 64 位"
-    validationPassed=0
-  else
-    if [ "x$majorVersion" == "x7" ] || [ "x$majorVersion" == "x8" ]; then
-      is64bitArch=$(uname -m)
-      if [ "x$is64bitArch" == "xx86_64" ]; then
-        colorMsg $green "[OK]"
-      else
-        colorMsg $red "[ERROR] 操作系统必须是 64 位的，32 位的不支持"
-        validationPassed=0
-      fi
-    else
-      colorMsg $red "[ERROR] 操作系统类型版本不符合要求，请使用 CentOS 7.x, CentOS 8.x, RHEL 7.x 版本 64 位"
-      validationPassed=0
-    fi
-  fi
-else
-  colorMsg $red "[ERROR] 操作系统类型版本不符合要求，请使用 CentOS 7.x, CentOS 8.x, RHEL 7.x版本 64 位"
-  validationPassed=0
-fi
+colorMsg $green "[OK]"
 
 #磁盘剩余空间检测
 echo -ne "磁盘剩余空间检测 \t........................ "
