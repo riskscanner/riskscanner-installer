@@ -13,4 +13,4 @@ tar zxvf riskscanner-release-${VERSION}.tar.gz
 
 cd riskscanner-release-${VERSION}/riskscanner
 
-/bin/bash install.sh
+/bin/bash ../install.sh
