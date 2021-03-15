@@ -90,8 +90,7 @@ cp rsctl /usr/local/bin && chmod +x /usr/local/bin/rsctl
 ln -s /usr/local/bin/rsctl /usr/bin/rsctl 2>/dev/null
 
 systemName=" RiskScanner 服务 "
-versionInfo=$(cat ../riskscanner/templates/version)
-colorMsg $yellow "\n\n开始检测 $systemName，版本 -V$versionInfo"
+colorMsg $yellow "\n\n开始检测 $systemName "
 
 echo -e "\n"
 printLogo $green "██████╗ ██╗███████╗██╗  ██╗███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗  "
@@ -250,10 +249,10 @@ fi
 log "启动 RiskScanner 服务"
 rsctl reload
 if [ $? -eq 0 ]; then
-  echo -ne "启动  RackShift 服务 \t........................ "
+  echo -ne "启动  RiskScanner 服务 \t........................ "
   colorMsg $green "[OK]"
 else
-  echo -ne "启动  RackShift 服务 \t........................ "
+  echo -ne "启动  RiskScanner 服务 \t........................ "
   colorMsg $red "[失败]"
   exit 1
 fi
