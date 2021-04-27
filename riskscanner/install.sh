@@ -55,6 +55,7 @@ fi
 
 set -a
 if [[ $RS_BASE ]] && [[ -f $RS_BASE/riskscanner/.env ]]; then
+   sed -i 's\^RS_PREFIX=registry.cn-qingdao.aliyuncs.com/x-lab/riskscanner\RS_PREFIX=registry.cn-qingdao.aliyuncs.com/x-lab\g' $RS_BASE/riskscanner/.env
    source $RS_BASE/riskscanner/.env
    RS_TAG=`grep "^RS_TAG=" install.conf | cut -d'=' -f2`
 else
@@ -213,6 +214,7 @@ fi
 cd ${RS_RUN_BASE}
 env | grep RS_ >.env
 
+lalai
 if [ ${RS_EXTERNAL_MYSQL} = "false" ]; then
    mkdir -p ${RS_RUN_BASE}/data/mysql
    compose_files="${compose_files} -f docker-compose-mysql.yml"
