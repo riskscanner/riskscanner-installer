@@ -2,7 +2,7 @@ version: '2.1'
 services:
 
   riskscanner:
-    image: ${RS_PREFIX}/riskscanner:v1.1.1
+    image: ${RS_PREFIX}/riskscanner:v1.2.0
     container_name: riskscanner
     ports:
       - ${RS_PORT}:8088
