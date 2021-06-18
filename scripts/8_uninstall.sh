@@ -7,6 +7,7 @@ PROJECT_DIR=$(dirname ${BASE_DIR})
 function remove_riskscanner() {
   echo -e "$(gettext 'Make sure you have a backup of data, this operation is not reversible')! \n"
   VOLUME_DIR=$(get_config VOLUME_DIR)
+  DOCKER_IMAGE_PREFIX=$(get_config DOCKER_IMAGE_PREFIX)
   confirm="n"
   read_from_input confirm "$(gettext 'Are you clean up riskscanner files')?" "y/n" "${confirm}"
   if [[ "${confirm}" == "y" ]]; then
@@ -28,7 +29,7 @@ function remove_riskscanner() {
   if [[ "${confirm}" == "y" ]]; then
     images=$(get_images)
     for image in ${images}; do
-      docker rmi ${image}
+      docker rmi ${DOCKER_IMAGE_PREFIX}/${image}
     done
   fi
   echo_green "$(gettext 'Cleanup complete')!"
