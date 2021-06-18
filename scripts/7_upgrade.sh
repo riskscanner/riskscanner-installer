@@ -13,7 +13,7 @@ function upgrade_config() {
   cd "${PROJECT_DIR}" || exit
 
   volume_dir=$(get_config VOLUME_DIR)
-  cp -rf config_init/conf/version ${volume_dir}/conf/version
+  \cp -rf config_init/conf/version ${volume_dir}/conf/version
 
   current_version=$(get_config CURRENT_VERSION)
   if [ -z "${current_version}" ]; then
@@ -57,10 +57,10 @@ function main() {
     export VERSION=${to_version}
   fi
   echo
-  update_config_if_need && echo_done || (echo_failed; exit  1)
+  update_config_if_need
 
   echo_yellow "\n1. $(gettext 'Upgrade Docker image')"
-  bash "${SCRIPT_DIR}/3_load_images.sh" && echo_done || (echo_failed; exit  1)
+  bash "${SCRIPT_DIR}/3_load_images.sh" || (echo_failed; exit  1)
 
   echo_yellow "\n2. $(gettext 'Backup database')"
   backup_db || exit 1
