@@ -74,7 +74,7 @@ function down() {
 
 function restart() {
   stop
-  echo -e "\n"
+  echo
   start
 }
 
