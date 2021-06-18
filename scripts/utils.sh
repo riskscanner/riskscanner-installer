@@ -299,8 +299,8 @@ function image_has_prefix() {
 }
 
 function docker_network_check() {
-  if [[ ! "$(docker network ls | grep rs_default)" ]]; then
-    docker network create rs_default
+  if [[ ! "$(docker network ls | grep rs_net)" ]]; then
+    docker network create rs_net
   fi
 }
 
