@@ -1,0 +1,11 @@
+version: '2.4'
+
+networks:
+  net:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: ${DOCKER_SUBNET}
+        - subnet: ${DOCKER_SUBNET_IPV6}
