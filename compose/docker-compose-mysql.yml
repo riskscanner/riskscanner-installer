@@ -15,8 +15,6 @@ services:
       DB_PORT: $DB_PORT
       MYSQL_ROOT_PASSWORD: $DB_PASSWORD
       MYSQL_DATABASE: $DB_NAME
-    ports:
-      - 3306:3306
     volumes:
       - ${VOLUME_DIR}/conf/mysql:/etc/mysql
       - ${VOLUME_DIR}/data/mysql:/var/lib/mysql
@@ -27,5 +25,3 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    networks:
-      - net

@@ -176,7 +176,8 @@ function log_error() {
 
 function get_docker_compose_cmd_line() {
   ignore_db="$1"
-  cmd="docker-compose -f ./compose/docker-compose-app.yml -f ./compose/docker-compose-network.yml"
+  cmd="docker-compose -f ./compose/docker-compose-app.yml"
+  use_external_mysql=$(get_config USE_EXTERNAL_MYSQL)
   if [[ "${use_external_mysql}" != "1" && "${ignore_db}" != "ignore_db" ]]; then
     cmd="${cmd} -f ./compose/docker-compose-mysql.yml"
   fi
@@ -299,8 +300,8 @@ function image_has_prefix() {
 }
 
 function docker_network_check() {
-  if [[ ! "$(docker network ls | grep rs_net)" ]]; then
-    docker network create rs_net
+  if [[ ! "$(docker network ls | grep rs_default)" ]]; then
+    docker network create rs_default
   fi
 }
 
