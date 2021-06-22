@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-18 16:18+0800\n"
+"POT-Creation-Date: 2021-06-22 09:03+0800\n"
 "Language-Team: Language locale/zh\n"
 "Language: locale/zh_CN/LC_MESSAGES/riskscanner-installer\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 msgid "Configuration file not found"
 msgstr "配置文件不存在"
 
-#: rsctl.sh:14 scripts/utils.sh:204
+#: rsctl.sh:14 scripts/utils.sh:205
 msgid "Please install it first"
 msgstr "请先安装"
 
@@ -53,7 +53,7 @@ msgstr "下线 RiskScanner"
 msgid "Restart   RiskScanner"
 msgstr "重启 RiskScanner"
 
-#: rsctl.sh:43 scripts/8_uninstall.sh:38
+#: rsctl.sh:43 scripts/8_uninstall.sh:39
 msgid "Uninstall RiskScanner"
 msgstr "卸载 RiskScanner"
 
@@ -73,23 +73,23 @@ msgstr "备份数据库"
 msgid "Data recovery through database backup file"
 msgstr "通过数据库备份文件恢复数据"
 
-#: rsctl.sh:86
+#: rsctl.sh:85
 msgid "The current version is up to date"
 msgstr "当前版本已是最新"
 
-#: rsctl.sh:89
+#: rsctl.sh:88
 msgid "The latest version is"
 msgstr "最新版本是"
 
-#: rsctl.sh:90
+#: rsctl.sh:89
 msgid "The current version is"
 msgstr "当前版本是"
 
-#: rsctl.sh:131
+#: rsctl.sh:130
 msgid "Reconfig successfully. You can now restart the program"
 msgstr "重置成功. 请重新启动程序"
 
-#: rsctl.sh:135
+#: rsctl.sh:134
 msgid "Reset failed, please try again or check whether the database is normal"
 msgstr "重置失败, 请重试或者检查数据库是否正常"
 
@@ -123,7 +123,7 @@ msgstr "Docker 没有运行, 请安装并启动"
 
 #: scripts/0_prepare.sh:92
 #, fuzzy
-msgid "Save image"
+msgid "Save Image"
 msgstr "保存镜像"
 
 #: scripts/0_prepare.sh:95
@@ -138,73 +138,75 @@ msgstr "准备 Docker 离线包"
 msgid "Preparing image offline package"
 msgstr "准备 Docker 镜像离线包"
 
-#: scripts/1_config_riskscanner.sh:11
-#, fuzzy
-msgid "Configure Network"
-msgstr "配置网络"
-
-#: scripts/1_config_riskscanner.sh:17
-#, fuzzy
-msgid "Do you want to support IPv6"
-msgstr "是否启用 IPv6"
-
-#: scripts/1_config_riskscanner.sh:27
+#: scripts/1_config_riskscanner.sh:10
 msgid "Configure Persistent Directory"
 msgstr "配置持久化目录"
 
-#: scripts/1_config_riskscanner.sh:33
+#: scripts/1_config_riskscanner.sh:16
 msgid "Do you need custom persistent store, will use the default directory"
 msgstr "是否需要自定义持久化存储, 默认将使用目录"
 
-#: scripts/1_config_riskscanner.sh:36
+#: scripts/1_config_riskscanner.sh:19
 msgid ""
 "To modify the persistent directory such as logs video, you can select your "
 "largest disk and create a directory in it, such as"
 msgstr "修改日志录像等持久化的目录, 可以找个最大的磁盘, 并创建目录, 如"
 
-#: scripts/1_config_riskscanner.sh:37
+#: scripts/1_config_riskscanner.sh:20
 msgid ""
 "Note: you can not change it after installation, otherwise the database may "
 "be lost"
 msgstr "注意：安装后不能更改, 否则数据库可能会丢失"
 
-#: scripts/1_config_riskscanner.sh:41
+#: scripts/1_config_riskscanner.sh:24
 msgid "Persistent storage directory"
 msgstr "持久化存储目录"
 
-#: scripts/1_config_riskscanner.sh:65
+#: scripts/1_config_riskscanner.sh:48
 msgid "Please enter MySQL server IP"
 msgstr "请输入 mysql 的主机地址"
 
-#: scripts/1_config_riskscanner.sh:71
+#: scripts/1_config_riskscanner.sh:54
 msgid "Please enter MySQL server port"
 msgstr "请输入 mysql 的端口"
 
-#: scripts/1_config_riskscanner.sh:74
+#: scripts/1_config_riskscanner.sh:57
 msgid "Please enter MySQL database name"
 msgstr "请输入 mysql 的数据库"
 
-#: scripts/1_config_riskscanner.sh:77
+#: scripts/1_config_riskscanner.sh:60
 msgid "Please enter MySQL username"
 msgstr "请输入 mysql 的用户名"
 
-#: scripts/1_config_riskscanner.sh:80
+#: scripts/1_config_riskscanner.sh:63
 msgid "Please enter MySQL password"
 msgstr "请输入 mysql 的密码"
 
-#: scripts/1_config_riskscanner.sh:84
+#: scripts/1_config_riskscanner.sh:67
 msgid "Failed to connect to database, please reset"
 msgstr "测试连接数据库失败, 请重新设置"
 
-#: scripts/1_config_riskscanner.sh:116
+#: scripts/1_config_riskscanner.sh:99
 msgid "Configure MySQL"
 msgstr "配置 MySQL"
 
-#: scripts/1_config_riskscanner.sh:122
+#: scripts/1_config_riskscanner.sh:105
 msgid "Do you want to use external MySQL"
 msgstr "是否使用外部 MySQL"
 
-#: scripts/1_config_riskscanner.sh:135
+#: scripts/1_config_riskscanner.sh:116
+msgid "Configure External Port"
+msgstr "配置对外端口"
+
+#: scripts/1_config_riskscanner.sh:118
+msgid "Do you need to customize the RiskScanner external port"
+msgstr "是否需要配置 RiskScanner 对外访问端口"
+
+#: scripts/1_config_riskscanner.sh:121
+msgid "RiskScanner web port"
+msgstr "RiskScanner web 端口"
+
+#: scripts/1_config_riskscanner.sh:130
 msgid "Init External MySQL"
 msgstr "初始化外置数据库"
 
@@ -319,27 +321,27 @@ msgstr "我们的官网"
 msgid "Documentation"
 msgstr "我们的文档"
 
-#: scripts/4_install_riskscanner.sh:76
+#: scripts/4_install_riskscanner.sh:77
 msgid "Install and Configure Docker"
 msgstr "安装配置 Docker"
 
-#: scripts/4_install_riskscanner.sh:78
+#: scripts/4_install_riskscanner.sh:79
 msgid "Loading Docker Image"
 msgstr "加载 Docker 镜像"
 
-#: scripts/4_install_riskscanner.sh:80
+#: scripts/4_install_riskscanner.sh:81
 msgid "Install and Configure RiskScanner"
 msgstr "安装配置 RiskScanner"
 
-#: scripts/5_db_backup.sh:18
+#: scripts/5_db_backup.sh:19
 msgid "Backing up"
 msgstr "正在备份"
 
-#: scripts/5_db_backup.sh:24
+#: scripts/5_db_backup.sh:25
 msgid "Backup failed"
 msgstr "备份失败"
 
-#: scripts/5_db_backup.sh:28
+#: scripts/5_db_backup.sh:29
 msgid "Backup succeeded! The backup file has been saved to"
 msgstr "备份成功! 备份文件已存放至"
 
@@ -393,19 +395,19 @@ msgstr "升级成功, 可以重启程序了"
 msgid "Make sure you have a backup of data, this operation is not reversible"
 msgstr "请确认已经备份好相关数据, 此操作不可逆"
 
-#: scripts/8_uninstall.sh:11
+#: scripts/8_uninstall.sh:12
 msgid "Are you clean up riskscanner files"
 msgstr "确认清理 riskscanner 相关文件"
 
-#: scripts/8_uninstall.sh:18 scripts/8_uninstall.sh:20
+#: scripts/8_uninstall.sh:19 scripts/8_uninstall.sh:21
 msgid "Cleaning up"
 msgstr "正在清理"
 
-#: scripts/8_uninstall.sh:27
+#: scripts/8_uninstall.sh:28
 msgid "Do you need to clean up the Docker image"
 msgstr "是否清理 Docker 镜像"
 
-#: scripts/8_uninstall.sh:34
+#: scripts/8_uninstall.sh:35
 msgid "Cleanup complete"
 msgstr "清理完成"
 
@@ -425,18 +427,18 @@ msgstr "完成"
 msgid "fail"
 msgstr "失败"
 
-#: scripts/utils.sh:241
+#: scripts/utils.sh:237
 msgid "Check Configuration File"
 msgstr "检查配置文件"
 
-#: scripts/utils.sh:242
+#: scripts/utils.sh:238
 msgid "Path to Configuration file"
 msgstr "配置文件位置"
 
-#: scripts/utils.sh:266
+#: scripts/utils.sh:262
 msgid "Backup Configuration File"
 msgstr "备份配置文件"
 
-#: scripts/utils.sh:268
+#: scripts/utils.sh:264
 msgid "Back up to"
 msgstr "正在备份"
