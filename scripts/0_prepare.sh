@@ -75,6 +75,7 @@ function prepare_image_files() {
     if [[ -n "${DOCKER_IMAGE_PREFIX}" && $(image_has_prefix "${image}") == "0" ]]; then
       docker pull "${DOCKER_IMAGE_PREFIX}/${image}"
       docker tag "${DOCKER_IMAGE_PREFIX}/${image}" "${image}"
+      docker rmi -f "${DOCKER_IMAGE_PREFIX}/${image}"
     else
       docker pull "${image}"
     fi

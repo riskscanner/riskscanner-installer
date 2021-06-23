@@ -49,8 +49,7 @@ function pull_image() {
         docker tag "${DOCKER_IMAGE_PREFIX}/${image}" "${image}"
         docker rmi -f "${DOCKER_IMAGE_PREFIX}/${image}"
       else
-        log_error "$(gettext 'Not set') DOCKER_IMAGE_PREFIX"
-        exit 1
+        docker pull "${image}"
       fi
     fi
     ((i++)) || true
