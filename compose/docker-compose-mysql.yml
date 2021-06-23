@@ -1,0 +1,27 @@
+version: '2.4'
+
+services:
+  riskscanner:
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: registry.cn-qingdao.aliyuncs.com/x-lab/mysql:5.7.31
+    container_name: rs_mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      DB_PORT: $DB_PORT
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+      MYSQL_DATABASE: $DB_NAME
+    volumes:
+      - ${VOLUME_DIR}/conf/mysql:/etc/mysql
+      - ${VOLUME_DIR}/data/mysql:/var/lib/mysql
+      - ${VOLUME_DIR}/conf/mysql/sql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: "mysql -uroot -h127.0.0.1 -p$$MYSQL_ROOT_PASSWORD -e 'SHOW DATABASES;'"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

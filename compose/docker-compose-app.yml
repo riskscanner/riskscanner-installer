@@ -1,0 +1,21 @@
+version: '2.4'
+
+services:
+  riskscanner:
+    image: registry.cn-qingdao.aliyuncs.com/x-lab/riskscanner:${VERSION}
+    container_name: rs_scanner
+    restart: always
+    ports:
+      - ${HTTP_PORT}:8088
+    environment:
+      DB_VENDOR: mysql
+      DB_ADDR: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      PROXY_ADDRESS_FORWARDING: "true"
+      JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
+    volumes:
+      - ${VOLUME_DIR}/conf:/opt/riskscanner/conf
+      - ${VOLUME_DIR}/logs:/opt/riskscanner/logs

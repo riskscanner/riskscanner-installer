@@ -1,0 +1,25 @@
+# 以下设置如果为空系统会自动生成随机字符串填入
+
+## 安装配置
+DOCKER_IMAGE_PREFIX=registry.cn-qingdao.aliyuncs.com
+VOLUME_DIR=/opt/riskscanner
+DOCKER_DIR=/var/lib/docker
+
+## Compose 项目设置
+COMPOSE_PROJECT_NAME=rs
+COMPOSE_HTTP_TIMEOUT=3600
+DOCKER_CLIENT_TIMEOUT=3600
+
+##  MySQL 配置, USE_EXTERNAL_MYSQL=1 表示使用外置数据库, 请输入正确的 MySQL 信息
+USE_EXTERNAL_MYSQL=0
+DB_HOST=mysql
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=riskscanner
+
+## Service 端口
+HTTP_PORT=80
+
+# 额外的配置
+CURRENT_VERSION=

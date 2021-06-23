@@ -1,20 +1,29 @@
-# riskscanner-installer
+# RiskScanner 安装管理包
 
-## 安装：
+installer 可以安装、部署、更新 管理 RiskScanner
 
-```yaml
-    cd installer
-    ./install.sh
+## 安装
+
+```bash
+cd riskscanner-installer
+./rsctl.sh install
 ```
 
-## 运行命令：
-```yaml
-    安装完成之后 RiskScanner 会以名字为 "RiskScanner" 服务的形式存在会有如下命令
-    rsctl  status    查看 RiskScanner 服务运行状态
-    rsctl  start     启动 RiskScanner 服务
-    rsctl  stop      停止 RiskScanner 服务
-    rsctl  restart   重启 RiskScanner 服务
-    rsctl  reload    重新加载 RiskScanner 服务
-    rsctl  uninstall 卸载 RiskScanner 服务
-    rsctl  version   查看 RiskScanner 版本信息
+## 管理
+
+```bash
+# 启动
+./rsctl.sh start
+
+# 停止
+./rsctl.sh stop
+
+# 升级
+./rsctl.sh upgrade
+
+# 卸载
+./rsctl.sh uninstall
+
+# 帮助
+./rsctl.sh --help
 ```
