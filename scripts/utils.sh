@@ -79,7 +79,7 @@ function test_mysql_connect() {
   password=$4
   db=$5
   command="CREATE TABLE IF NOT EXISTS test(id INT); DROP TABLE test;"
-  docker run -it --rm registry.cn-qingdao.aliyuncs.com/x-lab/mysql:5.7.31 mysql -h${host} -P${port} -u${user} -p${password} ${db} -e "${command}" 2>/dev/null
+  docker run -it --rm x-lab/mysql:5.7.31 mysql -h${host} -P${port} -u${user} -p${password} ${db} -e "${command}" 2>/dev/null
 }
 
 function get_images() {
@@ -287,7 +287,7 @@ function get_latest_version() {
 }
 
 function image_has_prefix() {
-  if [[ $1 =~ registry.* ]]; then
+  if [[ $1 =~ fit2cloud.* ]]; then
     echo "1"
   else
     echo "0"

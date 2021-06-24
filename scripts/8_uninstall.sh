@@ -29,7 +29,7 @@ function remove_riskscanner() {
   if [[ "${confirm}" == "y" ]]; then
     images=$(get_images)
     for image in ${images}; do
-      docker rmi ${DOCKER_IMAGE_PREFIX}/${image}
+      docker rmi ${image}
     done
   fi
   echo_green "$(gettext 'Cleanup complete')!"

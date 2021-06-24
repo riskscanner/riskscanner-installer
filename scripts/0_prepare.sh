@@ -28,6 +28,7 @@ function prepare_docker_bin() {
     echo "$(gettext 'Using Docker cache'): /tmp/docker.tar.gz"
   fi
   cp /tmp/docker.tar.gz . && tar xzf docker.tar.gz && rm -f docker.tar.gz
+  chown -R root:root docker
   chmod +x docker/*
 }
 
@@ -48,6 +49,7 @@ function prepare_compose_bin() {
     mkdir -p ${BASE_DIR}/docker
   fi
   cp /tmp/docker-compose docker/
+  chown -R root:root docker
   chmod +x docker/*
   export PATH=$PATH:$(pwd)/docker
 }
@@ -63,6 +65,9 @@ function prepare_image_files() {
     scope="all"
   fi
   images=$(get_images $scope)
+  if [[ ! "${DOCKER_IMAGE_PREFIX}" ]]; then
+    DOCKER_IMAGE_PREFIX=registry.cn-qingdao.aliyuncs.com
+  fi
   i=0
   for image in ${images}; do
     ((i++)) || true
@@ -70,6 +75,7 @@ function prepare_image_files() {
     if [[ -n "${DOCKER_IMAGE_PREFIX}" && $(image_has_prefix "${image}") == "0" ]]; then
       docker pull "${DOCKER_IMAGE_PREFIX}/${image}"
       docker tag "${DOCKER_IMAGE_PREFIX}/${image}" "${image}"
+      docker rmi -f "${DOCKER_IMAGE_PREFIX}/${image}"
     else
       docker pull "${image}"
     fi
@@ -96,9 +102,7 @@ function prepare_image_files() {
     fi
     echo
   done
-
 }
-
 
 function main() {
   prepare_online_install_required_pkg
@@ -110,7 +114,6 @@ function main() {
 
   echo -e "\n2. $(gettext 'Preparing image offline package')"
   prepare_image_files
-
 }
 
 if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then

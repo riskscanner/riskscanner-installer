@@ -67,7 +67,7 @@ function main() {
 
   echo_yellow "\n3. $(gettext 'Upgrade successfully. You can now restart the program')"
   echo "./rsctl.sh restart"
-  echo -e "\n\n"
+  echo -e "\n"
   set_current_version
 }
 

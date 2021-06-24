@@ -18,7 +18,7 @@ function main() {
   mkdir -p ${BACKUP_DIR}
   echo "$(gettext 'Backing up')..."
   backup_cmd="mysqldump --host=${HOST} --port=${PORT} --user=${USER} --password=${PASSWORD} ${DATABASE}"
-  docker run --rm -i --network=rs_default registry.cn-qingdao.aliyuncs.com/x-lab/mysql:5.7.31 ${backup_cmd} > ${DB_FILE}
+  docker run --rm -i --network=rs_default x-lab/mysql:5.7.31 ${backup_cmd} > ${DB_FILE}
 
   code="x$?"
   if [[ "$code" != "x0" ]]; then

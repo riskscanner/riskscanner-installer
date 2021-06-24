@@ -2,7 +2,7 @@ version: '2.4'
 
 services:
   riskscanner:
-    image: registry.cn-qingdao.aliyuncs.com/x-lab/riskscanner:${VERSION}
+    image: x-lab/riskscanner:${VERSION}
     container_name: rs_scanner
     restart: always
     ports:

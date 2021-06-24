@@ -7,7 +7,7 @@ services:
         condition: service_healthy
 
   mysql:
-    image: registry.cn-qingdao.aliyuncs.com/x-lab/mysql:5.7.31
+    image: x-lab/mysql:5.7.31
     container_name: rs_mysql
     restart: always
     command: --default-authentication-plugin=mysql_native_password
