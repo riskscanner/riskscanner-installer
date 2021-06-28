@@ -1,0 +1,7 @@
+version: '2.4'
+
+services:
+  riskscanner:
+    depends_on:
+      mysql:
+        condition: service_healthy

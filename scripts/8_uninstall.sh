@@ -1,25 +1,23 @@
 ##　卸载脚本
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-PROJECT_DIR=$(dirname ${BASE_DIR})
 
 . "${BASE_DIR}/utils.sh"
 
 function remove_riskscanner() {
   echo -e "$(gettext 'Make sure you have a backup of data, this operation is not reversible')! \n"
   VOLUME_DIR=$(get_config VOLUME_DIR)
-  DOCKER_IMAGE_PREFIX=$(get_config DOCKER_IMAGE_PREFIX)
   confirm="n"
-  read_from_input confirm "$(gettext 'Are you clean up riskscanner files')?" "y/n" "${confirm}"
+  read_from_input confirm "$(gettext 'Are you clean up RiskScanner files')?" "y/n" "${confirm}"
   if [[ "${confirm}" == "y" ]]; then
     if [[ -f "${CONFIG_FILE}" ]]; then
-      cd "${PROJECT_DIR}"
+      cd "${PROJECT_DIR}" || exit 1
       bash ./rsctl.sh down
       sleep 2s
       echo
       echo -e "$(gettext 'Cleaning up') ${VOLUME_DIR}"
-      rm -rf ${VOLUME_DIR}
+      rm -rf "${VOLUME_DIR}"
       echo -e "$(gettext 'Cleaning up') ${CONFIG_DIR}"
-      rm -rf ${CONFIG_DIR}
+      rm -rf "${CONFIG_DIR}"
       echo_done
     fi
   fi
@@ -29,7 +27,7 @@ function remove_riskscanner() {
   if [[ "${confirm}" == "y" ]]; then
     images=$(get_images)
     for image in ${images}; do
-      docker rmi ${image}
+      docker rmi "${image}"
     done
   fi
   echo_green "$(gettext 'Cleanup complete')!"

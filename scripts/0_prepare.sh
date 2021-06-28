@@ -46,7 +46,7 @@ function prepare_compose_bin() {
     echo "$(gettext 'Using Docker Compose cache'): /tmp/docker-compose"
   fi
   if [[ ! -d "$BASE_DIR/docker" ]]; then
-    mkdir -p ${BASE_DIR}/docker
+    mkdir -p "${BASE_DIR}/docker"
   fi
   cp /tmp/docker-compose docker/
   chown -R root:root docker
