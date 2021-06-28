@@ -311,7 +311,7 @@ function docker_network_check() {
   project_name=$(get_config COMPOSE_PROJECT_NAME)
   net_name="${project_name}_default"
   if ! docker network ls | grep "${net_name}" >/dev/null; then
-    docker network create rs_default
+    docker network create "${net_name}"
   fi
 }
 
