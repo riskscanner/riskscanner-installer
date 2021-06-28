@@ -8,12 +8,8 @@ BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 target=$1
 
 function upgrade_config() {
-  # 如果配置文件有更新, 则添加到新的配置文件
-  cwd=$(pwd)
-  cd "${PROJECT_DIR}" || exit
-
   volume_dir=$(get_config VOLUME_DIR)
-  \cp -rf config_init/conf/version ${volume_dir}/conf/version
+  \cp -rf config_init/conf/version "${volume_dir}/conf/version"
 
   current_version=$(get_config CURRENT_VERSION)
   if [ -z "${current_version}" ]; then
@@ -22,11 +18,24 @@ function upgrade_config() {
 }
 
 function update_config_if_need() {
+  prepare_config
   upgrade_config
 }
 
 function backup_db() {
   docker_network_check
+  if docker ps | grep rs_scanner >/dev/null; then
+    confirm="n"
+    read_from_input confirm "$(gettext 'Detected that the RiskScanner container is running. Do you want to close the container and continue to upgrade')?" "y/n" "${confirm}"
+    if [[ "${confirm}" == "y" ]]; then
+      docker stop rs_scanner
+      docker rm rs_scanner
+      sleep 2s
+      echo
+    else
+      exit 1
+    fi
+  fi
   if [[ "${SKIP_BACKUP_DB}" != "1" ]]; then
     if ! bash "${SCRIPT_DIR}/5_db_backup.sh"; then
       confirm="n"
@@ -38,6 +47,19 @@ function backup_db() {
   else
     echo "SKIP_BACKUP_DB=${SKIP_BACKUP_DB}, $(gettext 'Skip database backup')"
   fi
+}
+
+function clear_images() {
+  if [[ "${current_version}" != "${to_version}" ]]; then
+    confirm="n"
+    read_from_input confirm "$(gettext 'Do you need to clean up the old version image')?" "y/n" "${confirm}"
+    if [[ "${confirm}" != "y" ]]; then
+      exit 1
+    else
+      docker images | grep riskscanner | grep "${current_version}" | awk '{print $3}' | xargs docker rmi -f
+    fi
+  fi
+  echo_done
 }
 
 function main() {
@@ -60,13 +82,16 @@ function main() {
   update_config_if_need
 
   echo_yellow "\n1. $(gettext 'Upgrade Docker image')"
-  bash "${SCRIPT_DIR}/3_load_images.sh" || (echo_failed; exit  1)
+  bash "${SCRIPT_DIR}/3_load_images.sh"
 
   echo_yellow "\n2. $(gettext 'Backup database')"
-  backup_db || exit 1
+  backup_db
 
-  echo_yellow "\n3. $(gettext 'Upgrade successfully. You can now restart the program')"
-  echo "./rsctl.sh restart"
+  echo_yellow "\n3. $(gettext 'Cleanup Image')"
+  clear_images
+
+  echo_yellow "\n4. $(gettext 'Upgrade successfully. You can now restart the program')"
+  echo "./rsctl.sh start"
   echo -e "\n"
   set_current_version
 }

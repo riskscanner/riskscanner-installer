@@ -19,24 +19,20 @@ function random_str() {
   if [[ -z ${len} ]]; then
     len=16
   fi
-  command -v dmidecode &>/dev/null
   uuid=None
-  if [[ "$?" == "0" ]]; then
+  if command -v dmidecode &>/dev/null; then
     uuid=$(dmidecode -t 1 | grep UUID | awk '{print $2}' | base64 | head -c ${len})
   fi
-  if [[ "$(echo $uuid | wc -L)" == "${len}" ]]; then
-    echo ${uuid}
+  if [[ "$(echo "$uuid" | wc -L)" == "${len}" ]]; then
+    echo "${uuid}"
   else
-    cat /dev/urandom | tr -dc A-Za-z0-9 | head -c ${len}; echo
+    cat < /dev/urandom | tr -dc A-Za-z0-9 | head -c ${len}; echo
   fi
 }
 
 function has_config() {
   key=$1
-  cwd=$(pwd)
-  grep "^${key}=" "${CONFIG_FILE}" &>/dev/null
-
-  if [[ "$?" == "0" ]]; then
+  if grep "^${key}=" "${CONFIG_FILE}" &>/dev/null; then
     echo "1"
   else
     echo "0"
@@ -44,7 +40,6 @@ function has_config() {
 }
 
 function get_config() {
-  cwd=$(pwd)
   key=$1
   value=$(grep "^${key}=" "${CONFIG_FILE}" | awk -F= '{ print $2 }')
   echo "${value}"
@@ -79,12 +74,12 @@ function test_mysql_connect() {
   password=$4
   db=$5
   command="CREATE TABLE IF NOT EXISTS test(id INT); DROP TABLE test;"
-  docker run -it --rm x-lab/mysql:5.7.31 mysql -h${host} -P${port} -u${user} -p${password} ${db} -e "${command}" 2>/dev/null
+  docker run -it --rm x-lab/mysql:5.7.31 mysql -h"${host}" -P"${port}" -u"${user}" -p"${password}" "${db}" -e "${command}" 2>/dev/null
 }
 
 function get_images() {
   scope="all"
-  if [[ ! -z "$1" ]]; then
+  if [[ -n "$1" ]]; then
     scope="$1"
   fi
   images=(
@@ -94,6 +89,9 @@ function get_images() {
   for image in "${images[@]}"; do
     echo "${image}"
   done
+  if [[ "${scope}" == "all" ]]; then
+    echo
+  fi
 }
 
 function read_from_input() {
@@ -101,7 +99,7 @@ function read_from_input() {
   msg=$2
   choices=$3
   default=$4
-  if [[ ! -z "${choices}" ]]; then
+  if [[ -n "${choices}" ]]; then
     msg="${msg} (${choices}) "
   fi
   if [[ -z "${default}" ]]; then
@@ -110,11 +108,11 @@ function read_from_input() {
     msg="${msg} ($(gettext 'default') ${default})"
   fi
   echo -n "${msg}: "
-  read input
-  if [[ -z "${input}" && ! -z "${default}" ]]; then
-    export ${var}="${default}"
+  read -r input
+  if [[ -z "${input}" && -n "${default}" ]]; then
+    export "${var}"="${default}"
   else
-    export ${var}="${input}"
+    export "${var}"="${input}"
   fi
 }
 
@@ -174,33 +172,50 @@ function log_error() {
   echo_red "[ERROR] $1"
 }
 
+function get_docker_compose_services() {
+  ignore_db="$1"
+  services="riskscanner"
+  use_external_mysql=$(get_config USE_EXTERNAL_MYSQL)
+  if [[ "${use_external_mysql}" != "1" && "${ignore_db}" != "ignore_db" ]]; then
+    services+=" mysql"
+  fi
+  echo "${services}"
+}
+
 function get_docker_compose_cmd_line() {
   ignore_db="$1"
   cmd="docker-compose -f ./compose/docker-compose-app.yml"
-  use_external_mysql=$(get_config USE_EXTERNAL_MYSQL)
-  if [[ "${use_external_mysql}" != "1" && "${ignore_db}" != "ignore_db" ]]; then
-    cmd="${cmd} -f ./compose/docker-compose-mysql.yml"
+  services=$(get_docker_compose_services "$ignore_db")
+  if [[ "${services}" =~ mysql ]]; then
+    cmd="${cmd} -f ./compose/docker-compose-mysql.yml -f ./compose/docker-compose-mysql-internal.yml"
   fi
   echo "${cmd}"
 }
 
 function install_required_pkg() {
   required_pkg=$1
-  if command -v dnf > /dev/null; then
+  if command -v dnf >/dev/null; then
     if [ "$required_pkg" == "python" ]; then
       dnf -q -y install python2
       ln -s /usr/bin/python2 /usr/bin/python
     else
-      dnf -q -y install $required_pkg
+      dnf -q -y install "$required_pkg"
     fi
-  elif command -v yum > /dev/null; then
-    yum -q -y install $required_pkg
-  elif command -v apt > /dev/null; then
-    apt-get -qq -y install $required_pkg
-  elif command -v zypper > /dev/null; then
-    zypper -q -n install $required_pkg
-  elif command -v apk > /dev/null; then
-    apk add -q $required_pkg
+  elif command -v yum >/dev/null; then
+    yum -q -y install "$required_pkg"
+  elif command -v apt >/dev/null; then
+    apt-get -qq -y install "$required_pkg"
+  elif command -v zypper >/dev/null; then
+    zypper -q -n install "$required_pkg"
+  elif command -v apk >/dev/null; then
+    if [ "$required_pkg" == "python" ]; then
+      apk add -q python2
+    else
+      apk add -q "$required_pkg"
+    fi
+    command -v gettext >/dev/null || {
+      apk add -q gettext-dev
+    }
   else
     echo_red "$(gettext 'Please install it first') $required_pkg"
     exit 1
@@ -208,17 +223,16 @@ function install_required_pkg() {
 }
 
 function prepare_online_install_required_pkg() {
-  for i in curl wget python zip; do
+  for i in curl wget zip python; do
     command -v $i >/dev/null || install_required_pkg $i
   done
 }
 
 function prepare_set_redhat_firewalld() {
   if command -v firewall-cmd > /dev/null; then
-    firewall-cmd --state > /dev/null 2>&1
-    if [[ "$?" == "0" ]]; then
+    if firewall-cmd --state >/dev/null 2>&1; then
       if command -v dnf > /dev/null; then
-        if [[ ! "$(firewall-cmd --list-all | grep 'masquerade: yes')" ]]; then
+        if ! firewall-cmd --list-all | grep 'masquerade: yes' >/dev/null; then
           firewall-cmd --permanent --add-masquerade
           flag=1
         fi
@@ -231,13 +245,12 @@ function prepare_set_redhat_firewalld() {
 }
 
 function prepare_config() {
-  cwd=$(pwd)
   cd "${PROJECT_DIR}" || exit 1
 
   echo_yellow "1. $(gettext 'Check Configuration File')"
   echo "$(gettext 'Path to Configuration file'): ${CONFIG_DIR}"
   if [[ ! -d "${CONFIG_DIR}" ]]; then
-    mkdir -p ${CONFIG_DIR}
+    mkdir -p "${CONFIG_DIR}"
     cp config-example.txt "${CONFIG_FILE}"
   fi
   if [[ ! -f "${CONFIG_FILE}" ]]; then
@@ -268,16 +281,16 @@ function prepare_config() {
 function echo_logo() {
   cat << "EOF"
 
-  ██████╗  ██╗ ███████╗ ██╗  ██╗ ███████╗  ██████╗  █████╗  ███╗   ██╗ ███╗   ██╗ ███████╗ ██████╗
-  ██╔══██╗ ██║ ██╔════╝ ██║ ██╔╝ ██╔════╝ ██╔════╝ ██╔══██╗ ████╗  ██║ ████╗  ██║ ██╔════╝ ██╔══██╗
-  ██████╔╝ ██║ ███████╗ █████╔╝  ███████╗ ██║      ███████║ ██╔██╗ ██║ ██╔██╗ ██║ █████╗   ██████╔╝
-  ██╔══██╗ ██║ ╚════██║ ██╔═██╗  ╚════██║ ██║      ██╔══██║ ██║╚██╗██║ ██║╚██╗██║ ██╔══╝   ██╔══██╗
-  ██║  ██║ ██║ ███████║ ██║  ██╗ ███████║ ╚██████╗ ██║  ██║ ██║ ╚████║ ██║ ╚████║ ███████╗ ██║  ██║
-  ╚═╝  ╚═╝ ╚═╝ ╚══════╝ ╚═╝  ╚═╝ ╚══════╝  ╚═════╝ ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚═╝  ╚═══╝ ╚══════╝ ╚═╝  ╚═╝
+  ██████╗ ██╗███████╗██╗  ██╗███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗
+  ██╔══██╗██║██╔════╝██║ ██╔╝██╔════╝██╔════╝██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗
+  ██████╔╝██║███████╗█████╔╝ ███████╗██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝
+  ██╔══██╗██║╚════██║██╔═██╗ ╚════██║██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗
+  ██║  ██║██║███████║██║  ██╗███████║╚██████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║
+  ╚═╝  ╚═╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝
 
 EOF
 
-  echo -e "\t\t\t\t\t\t\t\t\t   Version: \033[33m $VERSION \033[0m \n"
+  echo -e "\t\t\t\t\t\t\t\t   Version: \033[33m $VERSION \033[0m \n"
 }
 
 function get_latest_version() {
@@ -295,7 +308,9 @@ function image_has_prefix() {
 }
 
 function docker_network_check() {
-  if [[ ! "$(docker network ls | grep rs_default)" ]]; then
+  project_name=$(get_config COMPOSE_PROJECT_NAME)
+  net_name="${project_name}_default"
+  if ! docker network ls | grep "${net_name}" >/dev/null; then
     docker network create rs_default
   fi
 }

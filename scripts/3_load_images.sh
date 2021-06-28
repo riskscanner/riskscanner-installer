@@ -43,7 +43,7 @@ function pull_image() {
   i=1
   for image in ${images}; do
     echo "[${image}]"
-    if [[ ! "$(docker images | grep $(echo ${image%:*}) | grep $(echo ${image#*:}))" ]]; then
+    if ! docker images | grep "${image%:*}" | grep "${image#*:}" >/dev/null; then
       if [[ -n "${DOCKER_IMAGE_PREFIX}" && $(image_has_prefix "${image}") == "0" ]]; then
         docker pull "${DOCKER_IMAGE_PREFIX}/${image}"
         docker tag "${DOCKER_IMAGE_PREFIX}/${image}" "${image}"

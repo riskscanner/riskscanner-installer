@@ -2,10 +2,8 @@
 # coding: utf-8
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-PROJECT_DIR=$(dirname ${BASE_DIR})
 # shellcheck source=./util.sh
 . "${BASE_DIR}/utils.sh"
-BACKUP_DIR=/opt/riskscanner/db_backup
 
 HOST=$(get_config DB_HOST)
 PORT=$(get_config DB_PORT)
@@ -25,13 +23,10 @@ function main() {
     exit 2
   fi
 
-  if [[ "${DB_FILE}" == *".gz" ]]; then
-    gunzip <${DB_FILE} | docker run --rm -i --network=rs_default x-lab/mysql:5.7.31 ${restore_cmd}
-  else
-    docker run --rm -i --network=rs_default x-lab/mysql:5.7.31 $restore_cmd <"${DB_FILE}"
-  fi
-  code="x$?"
-  if [[ "$code" != "x0" ]]; then
+  project_name=$(get_config COMPOSE_PROJECT_NAME)
+  net_name="${project_name}_default"
+
+  if ! docker run --rm -i --network="${net_name}" x-lab/mysql:5.7.31 ${restore_cmd} <"${DB_FILE}"; then
     log_error "$(gettext 'Database recovery failed. Please check whether the database file is complete or try to recover manually')!"
     exit 1
   else

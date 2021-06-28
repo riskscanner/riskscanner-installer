@@ -65,16 +65,41 @@ function start() {
 }
 
 function stop() {
-  ${EXE} stop
+  if [[ -n "${target}" ]]; then
+    ${EXE} stop "${target}" && ${EXE} rm -f "${target}"
+    return
+  fi
+  services=$(get_docker_compose_services ignore_db)
+  for i in ${services}; do
+    ${EXE} stop "${i}"
+  done
+  for i in ${services}; do
+    ${EXE} rm -f "${i}" >/dev/null
+  done
 }
 
-function down() {
-  ${EXE} down
+function close() {
+  if [[ -n "${target}" ]]; then
+    ${EXE} stop "${target}"
+    return
+  fi
+  services=$(get_docker_compose_services ignore_db)
+  for i in ${services}; do
+    ${EXE} stop "${i}"
+  done
+}
+
+function pull() {
+   if [[ -n "${target}" ]]; then
+    ${EXE} pull "${target}"
+    return
+  fi
+  ${EXE} pull
 }
 
 function restart() {
   stop
-  echo
+  echo -e "\n"
   start
 }
 
@@ -110,30 +135,7 @@ function main() {
       check_update
       ;;
     reconfig)
-      if [[ -f "${CONFIG_DIR}/rackhd/monorail/config.json" ]]; then
-        mv ${CONFIG_DIR}/rackhd/monorail/config.json ${CONFIG_DIR}/rackhd/monorail/config.json.bak-$(date +%F_%T)
-      fi
-      if [[ -f "${config_dir}/riskscanner.properties" ]]; then
-        mv ${config_dir}/riskscanner.properties ${config_dir}/riskscanner.properties.bak-$(date +%F_%T)
-      fi
       bash "${SCRIPT_DIR}/1_config_riskscanner.sh"
-
-      mysql_host=$(get_config DB_HOST)
-      mysql_port=$(get_config DB_PORT)
-      mysql_user=$(get_config DB_USER)
-      mysql_pass=$(get_config DB_PASSWORD)
-      mysql_db=$(get_config DB_NAME)
-      riskscanner_ip=$(get_config RACKSHIFT_IP)
-      command="update endpoint set ip='${riskscanner_ip}' where type='main_endpoint';"
-      docker run -it --rm riskscanner/mysql:5.7.31 mysql -h${mysql_host} -P${mysql_port} -u${mysql_user} -p${mysql_pass} ${mysql_db} -e "${command}" 2>/dev/null
-      if [ $? -eq 0 ]; then
-        echo_yellow "\n$(gettext 'Reconfig successfully. You can now restart the program')"
-        echo "./rsctl.sh restart"
-        echo -e "\n\n"
-      else
-        log_error "$(gettext 'Reset failed, please try again or check whether the database is normal'). "
-        exit 1
-      fi
       ;;
     start)
       start
@@ -143,6 +145,9 @@ function main() {
       ;;
     stop)
       stop
+      ;;
+    pull)
+      pull
       ;;
     close)
       close
@@ -179,6 +184,13 @@ function main() {
         docker_name=$(service_to_docker_name "${target}")
         docker logs -f "${docker_name}" --tail 100
       fi
+      ;;
+    exec)
+      docker_name=$(service_to_docker_name "${target}")
+      docker exec -it "${docker_name}" sh
+      ;;
+    show_services)
+      get_docker_compose_services
       ;;
     raw)
       ${EXE} "${args[@]:1}"
