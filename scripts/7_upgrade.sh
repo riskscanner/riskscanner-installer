@@ -81,16 +81,16 @@ function main() {
   echo
   update_config_if_need
 
-  echo_yellow "\n1. $(gettext 'Upgrade Docker image')"
+  echo_yellow "\n3. $(gettext 'Upgrade Docker image')"
   bash "${SCRIPT_DIR}/3_load_images.sh"
 
-  echo_yellow "\n2. $(gettext 'Backup database')"
+  echo_yellow "\n4. $(gettext 'Backup database')"
   backup_db
 
-  echo_yellow "\n3. $(gettext 'Cleanup Image')"
+  echo_yellow "\n5. $(gettext 'Cleanup Image')"
   clear_images
 
-  echo_yellow "\n4. $(gettext 'Upgrade successfully. You can now restart the program')"
+  echo_yellow "\n6. $(gettext 'Upgrade successfully. You can now restart the program')"
   echo "./rsctl.sh start"
   echo -e "\n"
   set_current_version
