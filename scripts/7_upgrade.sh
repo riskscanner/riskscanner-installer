@@ -56,7 +56,7 @@ function clear_images() {
     if [[ "${confirm}" != "y" ]]; then
       exit 1
     else
-      docker images | grep riskscanner | grep "${current_version}" | awk '{print $3}' | xargs docker rmi -f
+      docker images | grep x-lab/ | grep "${current_version}" | awk '{print $3}' | xargs docker rmi -f
     fi
   fi
   echo_done
