@@ -174,7 +174,7 @@ function log_error() {
 
 function get_docker_compose_services() {
   ignore_db="$1"
-  services="riskscanner"
+  services="scanner"
   use_external_mysql=$(get_config USE_EXTERNAL_MYSQL)
   if [[ "${use_external_mysql}" != "1" && "${ignore_db}" != "ignore_db" ]]; then
     services+=" mysql"
