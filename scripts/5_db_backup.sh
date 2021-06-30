@@ -2,7 +2,8 @@
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # shellcheck source=./util.sh
 . "${BASE_DIR}/utils.sh"
-BACKUP_DIR=/opt/riskscanner/db_backup
+VOLUME_DIR=$(get_config VOLUME_DIR)
+BACKUP_DIR="${VOLUME_DIR}/db_backup"
 CURRENT_VERSION=$(get_config CURRENT_VERSION)
 
 HOST=$(get_config DB_HOST)
@@ -14,7 +15,7 @@ DB_FILE=${BACKUP_DIR}/${DATABASE}-${CURRENT_VERSION}-$(date +%F_%T).sql
 
 function main() {
   docker_network_check
-  mkdir -p ${BACKUP_DIR}
+  mkdir -p "${BACKUP_DIR}"
   echo "$(gettext 'Backing up')..."
 
   project_name=$(get_config COMPOSE_PROJECT_NAME)

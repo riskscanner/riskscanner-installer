@@ -8,7 +8,6 @@ BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 . "${BASE_DIR}/0_prepare.sh"
 
 DOCKER_CONFIG="/etc/docker/daemon.json"
-docker_config_change=0
 docker_copy_failed=0
 
 cd "${BASE_DIR}" || exit 1
@@ -89,6 +88,16 @@ function set_docker_config() {
   key=$1
   value=$2
 
+  if command -v python >/dev/null; then
+    docker_command=python
+  elif command -v python2 >/dev/null; then
+    docker_command=python2
+  elif command -v python3 >/dev/null; then
+    docker_command=python3
+  else
+    return
+  fi
+
   if [[ ! -f "${DOCKER_CONFIG}" ]]; then
     config_dir=$(dirname ${DOCKER_CONFIG})
     if [[ ! -d ${config_dir} ]]; then
@@ -96,7 +105,8 @@ function set_docker_config() {
     fi
     echo -e "{\n}" >>${DOCKER_CONFIG}
   fi
-  $(python -c "import json
+
+"${docker_command}" -c "import json
 key = '${key}'
 value = '${value}'
 try:
@@ -111,7 +121,7 @@ f.close();
 f = open(filepath, 'w');
 json.dump(config, f, indent=True, sort_keys=True);
 f.close()
-")
+"
 }
 
 function config_docker() {
@@ -152,6 +162,7 @@ function check_docker_config() {
 function start_docker() {
   if command -v systemctl > /dev/null; then
     systemctl daemon-reload
+    systemctl enable docker
     systemctl start docker
   fi
   if ! docker ps >/dev/null 2>&1; then

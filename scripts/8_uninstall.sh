@@ -6,6 +6,7 @@ BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 function remove_riskscanner() {
   echo -e "$(gettext 'Make sure you have a backup of data, this operation is not reversible')! \n"
   VOLUME_DIR=$(get_config VOLUME_DIR)
+  images=$(get_images)
   confirm="n"
   read_from_input confirm "$(gettext 'Are you clean up RiskScanner files')?" "y/n" "${confirm}"
   if [[ "${confirm}" == "y" ]]; then
@@ -25,7 +26,6 @@ function remove_riskscanner() {
   confirm="n"
   read_from_input confirm "$(gettext 'Do you need to clean up the Docker image')?" "y/n" "${confirm}"
   if [[ "${confirm}" == "y" ]]; then
-    images=$(get_images)
     for image in ${images}; do
       docker rmi "${image}"
     done

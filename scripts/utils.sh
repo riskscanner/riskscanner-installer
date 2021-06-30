@@ -174,7 +174,7 @@ function log_error() {
 
 function get_docker_compose_services() {
   ignore_db="$1"
-  services="riskscanner"
+  services="scanner"
   use_external_mysql=$(get_config USE_EXTERNAL_MYSQL)
   if [[ "${use_external_mysql}" != "1" && "${ignore_db}" != "ignore_db" ]]; then
     services+=" mysql"
@@ -311,7 +311,7 @@ function docker_network_check() {
   project_name=$(get_config COMPOSE_PROJECT_NAME)
   net_name="${project_name}_default"
   if ! docker network ls | grep "${net_name}" >/dev/null; then
-    docker network create rs_default
+    docker network create "${net_name}"
   fi
 }
 
