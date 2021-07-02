@@ -11,7 +11,7 @@ services:
       MYSQL_ROOT_PASSWORD: $DB_PASSWORD
       MYSQL_DATABASE: $DB_NAME
     volumes:
-      - ${VOLUME_DIR}/conf/mysql:/etc/mysql
+      - ${VOLUME_DIR}/conf/mysql/mysql.cnf:/etc/my.cnf
       - ${VOLUME_DIR}/data/mysql:/var/lib/mysql
       - ${VOLUME_DIR}/conf/mysql/sql:/docker-entrypoint-initdb.d
     healthcheck:
