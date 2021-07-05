@@ -112,7 +112,7 @@ function check_update() {
   fi
   echo "$(gettext 'The latest version is'): ${latest_version}"
   echo "$(gettext 'The current version is'): ${current_version}"
-  echo
+  bash "${SCRIPT_DIR}/7_upgrade.sh" "${latest_version}"
 }
 
 function main() {
@@ -135,6 +135,7 @@ function main() {
       check_update
       ;;
     reconfig)
+      ${EXE} down -v
       bash "${SCRIPT_DIR}/1_config_riskscanner.sh"
       ;;
     start)
