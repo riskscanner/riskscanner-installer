@@ -51,6 +51,7 @@ function get_installer() {
   fi
   cd /opt/riskscanner-installer-$Version
   ./rsctl.sh install
+  ./rsctl.sh start
 }
 
 function main(){
