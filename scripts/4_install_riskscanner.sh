@@ -27,6 +27,7 @@ function post_install() {
   HTTP_PORT=$(get_config HTTP_PORT)
 
   echo_yellow "1. $(gettext 'You can use the following command to start, and then visit')"
+  echo "cd ${PROJECT_DIR}"
   echo "./rsctl.sh start"
 
   echo_yellow "\n2. $(gettext 'Other management commands')"
