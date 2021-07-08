@@ -233,12 +233,12 @@ function prepare_set_redhat_firewalld() {
     if firewall-cmd --state >/dev/null 2>&1; then
       if command -v dnf > /dev/null; then
         if ! firewall-cmd --list-all | grep 'masquerade: yes' >/dev/null; then
-          firewall-cmd --permanent --add-masquerade
+          firewall-cmd --permanent --add-masquerade >/dev/null
           flag=1
         fi
       fi
       if [[ "$flag" ]]; then
-          firewall-cmd --reload
+          firewall-cmd --reload >/dev/null
       fi
     fi
   fi
