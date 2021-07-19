@@ -308,10 +308,8 @@ function image_has_prefix() {
 }
 
 function docker_network_check() {
-  project_name=$(get_config COMPOSE_PROJECT_NAME)
-  net_name="${project_name}_default"
-  if ! docker network ls | grep "${net_name}" >/dev/null; then
-    docker network create "${net_name}"
+  if ! docker network ls | grep rs_default >/dev/null; then
+    docker network create rs_default
   fi
 }
 

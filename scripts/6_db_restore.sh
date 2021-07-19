@@ -23,10 +23,7 @@ function main() {
     exit 2
   fi
 
-  project_name=$(get_config COMPOSE_PROJECT_NAME)
-  net_name="${project_name}_default"
-
-  if ! docker run --rm -i --network="${net_name}" x-lab/mysql:5.7.31 ${restore_cmd} <"${DB_FILE}"; then
+  if ! docker run --rm -i --network=rs_default x-lab/mysql:5.7.31 ${restore_cmd} <"${DB_FILE}"; then
     log_error "$(gettext 'Database recovery failed. Please check whether the database file is complete or try to recover manually')!"
     exit 1
   else

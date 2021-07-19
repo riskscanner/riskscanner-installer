@@ -21,6 +21,14 @@ function check_config_file() {
 
 function pre_check() {
   check_config_file || return 3
+
+  if [[ "${SHELL}" == "/bin/bash" ]]; then
+    if grep -q "alias rsctl=" ~/.bashrc; then
+      sed -i 's@alias rsctl=$@alias rsctl="cd '${PROJECT_DIR}' && ./rsctl.sh"@g' ~/.bashrc
+    else
+      echo 'alias rsctl="cd '${PROJECT_DIR}' && ./rsctl.sh"' >> ~/.bashrc
+    fi
+  fi
 }
 
 function usage() {
@@ -110,9 +118,31 @@ function check_update() {
     echo "$(gettext 'The current version is up to date')"
     return
   fi
-  echo "$(gettext 'The latest version is'): ${latest_version}"
-  echo "$(gettext 'The current version is'): ${current_version}"
-  bash "${SCRIPT_DIR}/7_upgrade.sh" "${latest_version}"
+  if [[ -n "${latest_version}" ]] && [[ ${latest_version} =~ v.* ]]; then
+    echo -e "\033[32m$(gettext 'The latest version is'): ${latest_version}\033[0m"
+  else
+    exit 1
+  fi
+  echo -e "$(gettext 'The current version is'): ${current_version}"
+  Install_DIR="$(cd "$(dirname "${PROJECT_DIR}")" >/dev/null 2>&1 && pwd)"
+  if [[ ! -d "${Install_DIR}/riskscanner-installer-${latest_version}" ]]; then
+    if [[ ! -f "${Install_DIR}/riskscanner-installer-${latest_version}.tar.gz" ]]; then
+      timeout 60s wget -qO "${Install_DIR}/riskscanner-installer-${latest_version}.tar.gz" "https://github.com/riskscanner/riskscanner-installer/releases/download/${latest_version}/riskscanner-installer-${latest_version}.tar.gz" || {
+        rm -f "${Install_DIR}/riskscanner-installer-${latest_version}.tar.gz"
+        exit 1
+      }
+    fi
+    tar -xf "${Install_DIR}/riskscanner-installer-${latest_version}.tar.gz" -C "${Install_DIR}" || {
+      rm -rf "${Install_DIR}/riskscanner-installer-${latest_version}" "${Install_DIR}/riskscanner-installer-${latest_version}.tar.gz"
+      exit 1
+    }
+  fi
+  cd "${Install_DIR}/riskscanner-installer-${latest_version}" || exit 1
+  echo
+  ./rsctl.sh upgrade "${latest_version}"
+  if [[ -d "${Install_DIR}/riskscanner-installer-${current_version}" ]]; then
+    mv "${Install_DIR}/riskscanner-installer-${current_version}" "${Install_DIR}/riskscanner-installer-${current_version}_old"
+  fi
 }
 
 function main() {

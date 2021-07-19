@@ -1,6 +1,8 @@
 #!/bin/bash
 #
 
+Version=dev
+
 function install_soft() {
     if command -v dnf > /dev/null; then
       if [ "$1" == "python" ]; then
@@ -30,26 +32,26 @@ function prepare_install() {
 }
 
 function get_installer() {
-  echo "download install script to /opt/riskscanner-installe (开始下载安装脚本到 /opt/riskscanner-installe)"
-  Version=$(curl -s 'https://api.github.com/repos/riskscanner/riskscanner/releases/latest' | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
-  if [ ! "$Version" ]; then
-    echo -e "[\033[31m ERROR \033[0m] Network Failed (请检查网络是否正常或尝试重新执行脚本)"
-  fi
-  cd /opt
-  if [ ! -d "/opt/riskscanner-installer-$Version" ]; then
-    wget -qO riskscanner-installer-$Version.tar.gz https://github.com/riskscanner/riskscanner-installer/releases/download/$Version/riskscanner-installer-$Version.tar.gz || {
-      rm -rf /opt/riskscanner-installer-$Version.tar.gz
-      echo -e "[\033[31m ERROR \033[0m] Failed to download riskscanner-installer (下载 riskscanner-installer 失败, 请检查网络是否正常或尝试重新执行脚本)"
+  echo "download install script to /opt/riskscanner-installer-${Version} (开始下载安装脚本到 /opt/riskscanner-installer-${Version})"
+  cd /opt || exit
+  if [ ! -d "/opt/riskscanner-installer-${Version}" ]; then
+    timeout 60s wget -qO riskscanner-installer-${Version}.tar.gz https://github.com/riskscanner/riskscanner-installer/releases/download/${Version}/riskscanner-installer-${Version}.tar.gz || {
+      rm -rf /opt/riskscanner-installer-${Version}.tar.gz
+      echo -e "[\033[31m ERROR \033[0m] Failed to download riskscanner-installer-${Version} (下载 riskscanner-installer-${Version} 失败, 请检查网络是否正常或尝试重新执行脚本)"
       exit 1
     }
-    tar -xf /opt/riskscanner-installer-$Version.tar.gz -C /opt || {
-      rm -rf /opt/riskscanner-installer-$Version
-      echo -e "[\033[31m ERROR \033[0m] Failed to unzip riskscanner-installe (解压 riskscanner-installer 失败, 请检查网络是否正常或尝试重新执行脚本)"
+    tar -xf /opt/riskscanner-installer-${Version}.tar.gz -C /opt || {
+      rm -rf /opt/riskscanner-installer-${Version}
+      echo -e "[\033[31m ERROR \033[0m] Failed to unzip riskscanner-installer-${Version} (解压 riskscanner-installer-${Version} 失败, 请检查网络是否正常或尝试重新执行脚本)"
       exit 1
     }
-    rm -rf /opt/riskscanner-installer-$Version.tar.gz
+    rm -rf /opt/riskscanner-installer-${Version}.tar.gz
   fi
-  cd /opt/riskscanner-installer-$Version
+}
+
+function config_installer() {
+  cd /opt/riskscanner-installer-${Version} || exit 1
+  sed -i "s/VERSION=.*/VERSION=${Version}/g" /opt/riskscanner-installer-${Version}/static.env
   ./rsctl.sh install
   ./rsctl.sh start
 }
@@ -57,5 +59,6 @@ function get_installer() {
 function main(){
   prepare_install
   get_installer
+  config_installer
 }
 main
