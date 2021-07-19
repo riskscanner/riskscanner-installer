@@ -53,9 +53,7 @@ function clear_images() {
   if [[ "${current_version}" != "${to_version}" ]]; then
     confirm="n"
     read_from_input confirm "$(gettext 'Do you need to clean up the old version image')?" "y/n" "${confirm}"
-    if [[ "${confirm}" != "y" ]]; then
-      exit 1
-    else
+    if [[ "${confirm}" == "y" ]]; then
       docker images | grep x-lab/ | grep "${current_version}" | awk '{print $3}' | xargs docker rmi -f
     fi
   fi

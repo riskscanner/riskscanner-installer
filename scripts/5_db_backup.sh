@@ -15,14 +15,14 @@ DB_FILE=${BACKUP_DIR}/${DATABASE}-${CURRENT_VERSION}-$(date +%F_%T).sql
 
 function main() {
   docker_network_check
-  mkdir -p "${BACKUP_DIR}"
+  if [[ ! -d ${BACKUP_DIR} ]]; then
+    mkdir -p ${BACKUP_DIR}
+  fi
+
   echo "$(gettext 'Backing up')..."
 
-  project_name=$(get_config COMPOSE_PROJECT_NAME)
-  net_name="${project_name}_default"
-
   backup_cmd="mysqldump --host=${HOST} --port=${PORT} --user=${USER} --password=${PASSWORD} ${DATABASE}"
-  if ! docker run --rm -i --network="${net_name}" x-lab/mysql:5.7.31 ${backup_cmd} > "${DB_FILE}"; then
+  if ! docker run --rm -i --network=rs_default x-lab/mysql:5.7.31 ${backup_cmd} > "${DB_FILE}"; then
     log_error "$(gettext 'Backup failed')!"
     rm -f "${DB_FILE}"
     exit 1
