@@ -246,6 +246,10 @@ function prepare_set_redhat_firewalld() {
 
 function prepare_config() {
   cd "${PROJECT_DIR}" || exit 1
+  echo -e "#!/usr/bin/env bash\n#" > /usr/bin/rsctl
+  echo -e "cd ${PROJECT_DIR}" >> /usr/bin/rsctl
+  echo -e './rsctl.sh $@' >> /usr/bin/rsctl
+  chmod 755 /usr/bin/rsctl
 
   echo_yellow "1. $(gettext 'Check Configuration File')"
   echo "$(gettext 'Path to Configuration file'): ${CONFIG_DIR}"
