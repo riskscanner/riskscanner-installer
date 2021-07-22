@@ -21,14 +21,6 @@ function check_config_file() {
 
 function pre_check() {
   check_config_file || return 3
-
-  if [[ "${SHELL}" == "/bin/bash" ]]; then
-    if grep -q "alias rsctl=" ~/.bashrc; then
-      sed -i 's@alias rsctl=$@alias rsctl="cd '${PROJECT_DIR}' && ./rsctl.sh"@g' ~/.bashrc
-    else
-      echo 'alias rsctl="cd '${PROJECT_DIR}' && ./rsctl.sh"' >> ~/.bashrc
-    fi
-  fi
 }
 
 function usage() {

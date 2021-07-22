@@ -15,6 +15,12 @@ function upgrade_config() {
   if [ -z "${current_version}" ]; then
     set_config CURRENT_VERSION "${VERSION}"
   fi
+
+  if [[ "${SHELL}" == "/bin/bash" ]]; then
+    if grep -q "alias rsctl=" ~/.bashrc; then
+      sed -i 's@alias rsctl=.*@@g' ~/.bashrc
+    fi
+  fi
 }
 
 function update_config_if_need() {
