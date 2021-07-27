@@ -6,90 +6,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-28 10:16+0800\n"
+"POT-Creation-Date: 2021-07-27 16:54+0800\n"
 "Language-Team: Language locale/zh\n"
 "Language: locale/en/LC_MESSAGES/riskscanner-installer\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: rsctl.sh:13
-msgid "Configuration file not found"
-msgstr ""
-
-#: rsctl.sh:14 scripts/utils.sh:220
-msgid "Please install it first"
-msgstr ""
-
-#: rsctl.sh:27
-msgid "Deployment Management Script"
-msgstr ""
-
-#: rsctl.sh:34
-msgid "Status    RiskScanner"
-msgstr ""
-
-#: rsctl.sh:35
-msgid "Upgrade   RiskScanner"
-msgstr ""
-
-#: rsctl.sh:36
-msgid "Reconfig  RiskScanner"
-msgstr ""
-
-#: rsctl.sh:39
-msgid "Start     RiskScanner"
-msgstr ""
-
-#: rsctl.sh:40
-msgid "Stop      RiskScanner"
-msgstr ""
-
-#: rsctl.sh:41
-msgid "Down      RiskScanner"
-msgstr ""
-
-#: rsctl.sh:42
-msgid "Restart   RiskScanner"
-msgstr ""
-
-#: rsctl.sh:43 scripts/8_uninstall.sh:37
-msgid "Uninstall RiskScanner"
-msgstr ""
-
-#: rsctl.sh:46
-msgid "View RiskScanner version"
-msgstr ""
-
-#: rsctl.sh:47
-msgid "Loading docker image"
-msgstr ""
-
-#: rsctl.sh:48 scripts/7_upgrade.sh:90
-msgid "Backup database"
-msgstr ""
-
-#: rsctl.sh:49
-msgid "Data recovery through database backup file"
-msgstr ""
-
-#: rsctl.sh:110
-msgid "The current version is up to date"
-msgstr ""
-
-#: rsctl.sh:113
-msgid "The latest version is"
-msgstr ""
-
-#: rsctl.sh:114
-msgid "The current version is"
-msgstr ""
-
-#: scripts/0_prepare.sh:22
+#: scripts/0_prepare.sh:21
 msgid "Starting to download Docker engine"
 msgstr ""
 
-#: scripts/0_prepare.sh:24
+#: scripts/0_prepare.sh:23
 msgid "Download docker fails, check the network is normal"
 msgstr ""
 
@@ -97,35 +25,35 @@ msgstr ""
 msgid "Using Docker cache"
 msgstr ""
 
-#: scripts/0_prepare.sh:40
+#: scripts/0_prepare.sh:43
 msgid "Starting to download Docker Compose binary"
 msgstr ""
 
-#: scripts/0_prepare.sh:42
+#: scripts/0_prepare.sh:45
 msgid "Download docker-compose fails, check the network is normal"
 msgstr ""
 
-#: scripts/0_prepare.sh:46
+#: scripts/0_prepare.sh:50
 msgid "Using Docker Compose cache"
 msgstr ""
 
-#: scripts/0_prepare.sh:59
+#: scripts/0_prepare.sh:63
 msgid "Docker is not running, please install and start"
 msgstr ""
 
-#: scripts/0_prepare.sh:98
-msgid "Save Image"
+#: scripts/0_prepare.sh:89
+msgid "Save image"
 msgstr ""
 
-#: scripts/0_prepare.sh:101
+#: scripts/0_prepare.sh:92
 msgid "The image has been saved, skipping"
 msgstr ""
 
-#: scripts/0_prepare.sh:111
+#: scripts/0_prepare.sh:102
 msgid "Preparing Docker offline package"
 msgstr ""
 
-#: scripts/0_prepare.sh:115
+#: scripts/0_prepare.sh:106
 msgid "Preparing image offline package"
 msgstr ""
 
@@ -133,115 +61,109 @@ msgstr ""
 msgid "Configure Persistent Directory"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:14
+#: scripts/1_config_riskscanner.sh:11
 msgid "Do you need custom persistent store, will use the default directory"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:17
+#: scripts/1_config_riskscanner.sh:14
 msgid ""
 "To modify the persistent directory such as logs video, you can select your "
 "largest disk and create a directory in it, such as"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:18
+#: scripts/1_config_riskscanner.sh:15
 msgid ""
 "Note: you can not change it after installation, otherwise the database may "
 "be lost"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:22
+#: scripts/1_config_riskscanner.sh:19
 msgid "Persistent storage directory"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:51
+#: scripts/1_config_riskscanner.sh:49
 msgid "Please enter MySQL server IP"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:57
+#: scripts/1_config_riskscanner.sh:55
 msgid "Please enter MySQL server port"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:60
+#: scripts/1_config_riskscanner.sh:58
 msgid "Please enter MySQL database name"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:63
+#: scripts/1_config_riskscanner.sh:61
 msgid "Please enter MySQL username"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:66
+#: scripts/1_config_riskscanner.sh:64
 msgid "Please enter MySQL password"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:69
+#: scripts/1_config_riskscanner.sh:67
 msgid "Failed to connect to database, please reset"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:101
+#: scripts/1_config_riskscanner.sh:99
 msgid "Configure MySQL"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:107
+#: scripts/1_config_riskscanner.sh:105
 msgid "Do you want to use external MySQL"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:118
+#: scripts/1_config_riskscanner.sh:116
 msgid "Configure External Port"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:121
+#: scripts/1_config_riskscanner.sh:119
 msgid "Do you need to customize the RiskScanner external port"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:123
+#: scripts/1_config_riskscanner.sh:121
 msgid "RiskScanner web port"
 msgstr ""
 
-#: scripts/1_config_riskscanner.sh:132
-msgid "Init External MySQL"
+#: scripts/1_config_riskscanner.sh:130
+msgid "Init RiskScanner Database"
 msgstr ""
 
-#: scripts/2_install_docker.sh:31
+#: scripts/2_install_docker.sh:23
 msgid "Docker program does not exist"
 msgstr ""
 
-#: scripts/2_install_docker.sh:50
+#: scripts/2_install_docker.sh:42
 msgid "There are updates available currently. Do you want to update"
 msgstr ""
 
-#: scripts/2_install_docker.sh:57
-msgid ""
-"Docker file copy failed. May be that docker service is already running. "
-"Please stop the running docker and re-execute it"
-msgstr ""
-
-#: scripts/2_install_docker.sh:123
+#: scripts/2_install_docker.sh:129
 msgid "Do you need custom docker root dir, will use the default directory"
 msgstr ""
 
-#: scripts/2_install_docker.sh:127
+#: scripts/2_install_docker.sh:133
 msgid ""
 "Modify the default storage directory of Docker image, you can select your "
 "largest disk and create a directory in it, such as"
 msgstr ""
 
-#: scripts/2_install_docker.sh:130
+#: scripts/2_install_docker.sh:136
 msgid "Docker image storage directory"
 msgstr ""
 
-#: scripts/2_install_docker.sh:180
-msgid "Skip docker installation on macOS"
+#: scripts/2_install_docker.sh:192
+msgid "Skip docker installation on MacOS"
 msgstr ""
 
-#: scripts/2_install_docker.sh:183
+#: scripts/2_install_docker.sh:195
 msgid "Install Docker"
 msgstr ""
 
-#: scripts/2_install_docker.sh:186
+#: scripts/2_install_docker.sh:198
 msgid "Configure Docker"
 msgstr ""
 
-#: scripts/2_install_docker.sh:188
+#: scripts/2_install_docker.sh:200
 msgid "Start Docker"
 msgstr ""
 
@@ -249,23 +171,23 @@ msgstr ""
 msgid "Docker image loaded, skipping"
 msgstr ""
 
-#: scripts/4_install_riskscanner.sh:11
+#: scripts/4_install_riskscanner.sh:10
 msgid ""
 "The current Linux system does not support systemd management. Please deploy "
 "docker by yourself before running this script again"
 msgstr ""
 
-#: scripts/4_install_riskscanner.sh:15
+#: scripts/4_install_riskscanner.sh:14
 msgid ""
 "The current Linux system does not support systemd management. Please deploy "
 "docker-compose by yourself before running this script again"
 msgstr ""
 
-#: scripts/4_install_riskscanner.sh:22
+#: scripts/4_install_riskscanner.sh:21
 msgid "The Installation is Complete"
 msgstr ""
 
-#: scripts/4_install_riskscanner.sh:29
+#: scripts/4_install_riskscanner.sh:28
 msgid "You can use the following command to start, and then visit"
 msgstr ""
 
@@ -313,19 +235,19 @@ msgstr ""
 msgid "Install and Configure RiskScanner"
 msgstr ""
 
-#: scripts/5_db_backup.sh:18
+#: scripts/5_db_backup.sh:22
 msgid "Backing up"
 msgstr ""
 
-#: scripts/5_db_backup.sh:25
+#: scripts/5_db_backup.sh:27
 msgid "Backup failed"
 msgstr ""
 
-#: scripts/5_db_backup.sh:29
+#: scripts/5_db_backup.sh:31
 msgid "Backup succeeded! The backup file has been saved to"
 msgstr ""
 
-#: scripts/6_db_restore.sh:18
+#: scripts/6_db_restore.sh:16
 msgid "Start restoring database"
 msgstr ""
 
@@ -333,39 +255,39 @@ msgstr ""
 msgid "file does not exist"
 msgstr ""
 
-#: scripts/6_db_restore.sh:30
+#: scripts/6_db_restore.sh:27
 msgid ""
 "Database recovery failed. Please check whether the database file is complete "
 "or try to recover manually"
 msgstr ""
 
-#: scripts/6_db_restore.sh:33
+#: scripts/6_db_restore.sh:30
 msgid "Database recovered successfully"
 msgstr ""
 
-#: scripts/6_db_restore.sh:39
+#: scripts/6_db_restore.sh:36
 msgid "Format error"
 msgstr ""
 
-#: scripts/6_db_restore.sh:43
+#: scripts/6_db_restore.sh:40
 msgid "The backup file does not exist"
 msgstr ""
 
-#: scripts/7_upgrade.sh:30
+#: scripts/7_upgrade.sh:34
 msgid ""
 "Detected that the RiskScanner container is running. Do you want to close the "
 "container and continue to upgrade"
 msgstr ""
 
-#: scripts/7_upgrade.sh:44
+#: scripts/7_upgrade.sh:47
 msgid "Failed to backup the database. Continue to upgrade"
 msgstr ""
 
-#: scripts/7_upgrade.sh:50
+#: scripts/7_upgrade.sh:53
 msgid "Skip database backup"
 msgstr ""
 
-#: scripts/7_upgrade.sh:57
+#: scripts/7_upgrade.sh:60
 msgid "Do you need to clean up the old version image"
 msgstr ""
 
@@ -377,6 +299,10 @@ msgstr ""
 msgid "Upgrade Docker image"
 msgstr ""
 
+#: scripts/7_upgrade.sh:90 rsctl.sh:48
+msgid "Backup database"
+msgstr ""
+
 #: scripts/7_upgrade.sh:93
 msgid "Cleanup Image"
 msgstr ""
@@ -385,54 +311,123 @@ msgstr ""
 msgid "Upgrade successfully. You can now restart the program"
 msgstr ""
 
-#: scripts/8_uninstall.sh:7
+#: scripts/8_uninstall.sh:8
 msgid "Make sure you have a backup of data, this operation is not reversible"
 msgstr ""
 
-#: scripts/8_uninstall.sh:10
+#: scripts/8_uninstall.sh:12
 msgid "Are you clean up RiskScanner files"
 msgstr ""
 
-#: scripts/8_uninstall.sh:17 scripts/8_uninstall.sh:19
+#: scripts/8_uninstall.sh:19 scripts/8_uninstall.sh:21
+#: scripts/8_uninstall.sh:23
 msgid "Cleaning up"
 msgstr ""
 
-#: scripts/8_uninstall.sh:26
+#: scripts/8_uninstall.sh:30
 msgid "Do you need to clean up the Docker image"
 msgstr ""
 
-#: scripts/8_uninstall.sh:33
+#: scripts/8_uninstall.sh:36
 msgid "Cleanup complete"
 msgstr ""
 
-#: scripts/utils.sh:106
+#: scripts/8_uninstall.sh:40 rsctl.sh:43
+msgid "Uninstall RiskScanner"
+msgstr ""
+
+#: scripts/utils.sh:138
 msgid "no default"
 msgstr ""
 
-#: scripts/utils.sh:108
+#: scripts/utils.sh:140
 msgid "default"
 msgstr ""
 
-#: scripts/utils.sh:156
+#: scripts/utils.sh:188
 msgid "complete"
 msgstr ""
 
-#: scripts/utils.sh:160
+#: scripts/utils.sh:192
 msgid "fail"
 msgstr ""
 
-#: scripts/utils.sh:250
+#: scripts/utils.sh:251 rsctl.sh:14
+msgid "Please install it first"
+msgstr ""
+
+#: scripts/utils.sh:286
 msgid "Check Configuration File"
 msgstr ""
 
-#: scripts/utils.sh:251
+#: scripts/utils.sh:287
 msgid "Path to Configuration file"
 msgstr ""
 
-#: scripts/utils.sh:275
+#: scripts/utils.sh:312
 msgid "Backup Configuration File"
 msgstr ""
 
-#: scripts/utils.sh:277
+#: scripts/utils.sh:314
 msgid "Back up to"
+msgstr ""
+
+#: rsctl.sh:13
+msgid "Configuration file not found"
+msgstr ""
+
+#: rsctl.sh:27
+msgid "Deployment Management Script"
+msgstr ""
+
+#: rsctl.sh:34
+msgid "Status    RiskScanner"
+msgstr ""
+
+#: rsctl.sh:35
+msgid "Upgrade   RiskScanner"
+msgstr ""
+
+#: rsctl.sh:36
+msgid "Reconfig  RiskScanner"
+msgstr ""
+
+#: rsctl.sh:39
+msgid "Start     RiskScanner"
+msgstr ""
+
+#: rsctl.sh:40
+msgid "Stop      RiskScanner"
+msgstr ""
+
+#: rsctl.sh:41
+msgid "Down      RiskScanner"
+msgstr ""
+
+#: rsctl.sh:42
+msgid "Restart   RiskScanner"
+msgstr ""
+
+#: rsctl.sh:46
+msgid "View RiskScanner version"
+msgstr ""
+
+#: rsctl.sh:47
+msgid "Loading docker image"
+msgstr ""
+
+#: rsctl.sh:49
+msgid "Data recovery through database backup file"
+msgstr ""
+
+#: rsctl.sh:110
+msgid "The current version is up to date"
+msgstr ""
+
+#: rsctl.sh:114
+msgid "The latest version is"
+msgstr ""
+
+#: rsctl.sh:118
+msgid "The current version is"
 msgstr ""

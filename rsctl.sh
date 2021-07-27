@@ -132,9 +132,6 @@ function check_update() {
   cd "${Install_DIR}/riskscanner-installer-${latest_version}" || exit 1
   echo
   ./rsctl.sh upgrade "${latest_version}"
-  if [[ -d "${Install_DIR}/riskscanner-installer-${current_version}" ]]; then
-    mv "${Install_DIR}/riskscanner-installer-${current_version}" "${Install_DIR}/riskscanner-installer-${current_version}_old"
-  fi
 }
 
 function main() {

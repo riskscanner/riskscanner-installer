@@ -13,10 +13,10 @@ services:
     volumes:
       - ${VOLUME_DIR}/conf/mysql/mysql.cnf:/etc/my.cnf
       - ${VOLUME_DIR}/data/mysql:/var/lib/mysql
-      - ${VOLUME_DIR}/conf/mysql/sql:/docker-entrypoint-initdb.d
+      - ${VOLUME_DIR}/conf/mysql/sql/riskscanner.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: "mysql -uroot -h127.0.0.1 -p$$MYSQL_ROOT_PASSWORD -e 'SHOW DATABASES;'"
       interval: 10s
       timeout: 5s
       retries: 3
-      start_period: 20s
+      start_period: 30s

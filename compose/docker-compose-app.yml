@@ -19,3 +19,9 @@ services:
     volumes:
       - ${VOLUME_DIR}/conf:/opt/riskscanner/conf
       - ${VOLUME_DIR}/logs:/opt/riskscanner/logs
+    healthcheck:
+      test: "curl -fsL http://localhost:8088 > /dev/null"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s

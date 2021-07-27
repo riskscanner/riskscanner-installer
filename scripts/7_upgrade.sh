@@ -94,6 +94,7 @@ function main() {
   clear_images
 
   echo_yellow "\n6. $(gettext 'Upgrade successfully. You can now restart the program')"
+  echo "cd ${PROJECT_DIR}"
   echo "./rsctl.sh start"
   echo -e "\n"
   set_current_version

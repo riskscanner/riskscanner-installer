@@ -127,7 +127,7 @@ function set_service_port() {
 function init_db() {
   use_external_mysql=$(get_config USE_EXTERNAL_MYSQL)
   if [[ "${use_external_mysql}" == "1" ]]; then
-    echo_yellow "\n4. $(gettext 'Init External MySQL')"
+    echo_yellow "\n4. $(gettext 'Init RiskScanner Database')"
     volume_dir=$(get_config VOLUME_DIR)
     docker_network_check
     bash "${BASE_DIR}/6_db_restore.sh" "${volume_dir}/conf/mysql/sql/riskscanner.sql" || {
