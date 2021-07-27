@@ -1,5 +1,5 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
+#
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # shellcheck source=scripts/utils.sh
 . "${PROJECT_DIR}/scripts/utils.sh"
@@ -132,9 +132,6 @@ function check_update() {
   cd "${Install_DIR}/riskscanner-installer-${latest_version}" || exit 1
   echo
   ./rsctl.sh upgrade "${latest_version}"
-  if [[ -d "${Install_DIR}/riskscanner-installer-${current_version}" ]]; then
-    mv "${Install_DIR}/riskscanner-installer-${current_version}" "${Install_DIR}/riskscanner-installer-${current_version}_old"
-  fi
 }
 
 function main() {

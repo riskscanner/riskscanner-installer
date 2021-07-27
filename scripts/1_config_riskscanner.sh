@@ -1,15 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-# shellcheck source=./util.sh
+
 . "${BASE_DIR}/utils.sh"
 
 function set_volume_dir() {
   echo_yellow "1. $(gettext 'Configure Persistent Directory')"
-  volume_dir=$(get_config VOLUME_DIR)
-  if [[ -z "${volume_dir}" ]]; then
-    volume_dir="/opt/riskscanner"
-  fi
+  volume_dir=$(get_config VOLUME_DIR "/opt/riskscanner")
   confirm="n"
   read_from_input confirm "$(gettext 'Do you need custom persistent store, will use the default directory') ${volume_dir}?" "y/n" "${confirm}"
   if [[ "${confirm}" == "y" ]]; then
@@ -43,6 +40,7 @@ function set_volume_dir() {
   if [[ ! -f "${volume_dir}/conf/mysql/sql" ]]; then
     cp "${PROJECT_DIR}/config_init/mysql/riskscanner.sql" "${volume_dir}/conf/mysql/sql"
   fi
+  chmod 644 -R "${volume_dir}/conf"
   echo_done
 }
 
@@ -129,7 +127,7 @@ function set_service_port() {
 function init_db() {
   use_external_mysql=$(get_config USE_EXTERNAL_MYSQL)
   if [[ "${use_external_mysql}" == "1" ]]; then
-    echo_yellow "\n4. $(gettext 'Init External MySQL')"
+    echo_yellow "\n4. $(gettext 'Init RiskScanner Database')"
     volume_dir=$(get_config VOLUME_DIR)
     docker_network_check
     bash "${BASE_DIR}/6_db_restore.sh" "${volume_dir}/conf/mysql/sql/riskscanner.sql" || {
