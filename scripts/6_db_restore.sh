@@ -1,8 +1,7 @@
-#!/bin/bash
-# coding: utf-8
-
+#!/usr/bin/env bash
+#
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-# shellcheck source=./util.sh
+
 . "${BASE_DIR}/utils.sh"
 
 HOST=$(get_config DB_HOST)
@@ -14,10 +13,11 @@ DATABASE=$(get_config DB_NAME)
 DB_FILE="$1"
 
 function main() {
-  docker_network_check
   echo "$(gettext 'Start restoring database'): $DB_FILE"
-  restore_cmd="mysql --host=${HOST} --port=${PORT} --user=${USER} --password=${PASSWORD} ${DATABASE}"
 
+  docker_network_check
+
+  restore_cmd="mysql --host=${HOST} --port=${PORT} --user=${USER} --password=${PASSWORD} ${DATABASE}"
   if [[ ! -f "${DB_FILE}" ]]; then
     echo "$(gettext 'file does not exist'): ${DB_FILE}"
     exit 2

@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 #
-
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-# shellcheck source=./util.sh
+
 . "${BASE_DIR}/utils.sh"
 
 function pre_install() {

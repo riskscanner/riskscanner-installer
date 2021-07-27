@@ -1,11 +1,10 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
+#
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-# shellcheck source=./util.sh
+
 . "${BASE_DIR}/utils.sh"
 
 IMAGE_DIR="images"
-DOCKER_IMAGE_PREFIX="${DOCKER_IMAGE_PREFIX-}"
 USE_XPACK="${USE_XPACK-0}"
 
 function prepare_config_xpack() {
@@ -22,12 +21,16 @@ function prepare_docker_bin() {
     echo "$(gettext 'Starting to download Docker engine') ..."
     wget -q "${DOCKER_BIN_URL}" -O /tmp/docker.tar.gz || {
       log_error "$(gettext 'Download docker fails, check the network is normal')"
+      rm -f /tmp/docker.tar.gz
       exit 1
     }
   else
     echo "$(gettext 'Using Docker cache'): /tmp/docker.tar.gz"
   fi
-  cp /tmp/docker.tar.gz . && tar xzf docker.tar.gz && rm -f docker.tar.gz
+  tar -xf /tmp/docker.tar.gz -C ./ || {
+    rm -rf docker /tmp/docker.tar.gz
+    exit 1
+  }
   chown -R root:root docker
   chmod +x docker/*
 }
@@ -40,6 +43,7 @@ function prepare_compose_bin() {
     echo "$(gettext 'Starting to download Docker Compose binary') ..."
     wget -q "${DOCKER_COMPOSE_BIN_URL}" -O /tmp/docker-compose || {
       log_error "$(gettext 'Download docker-compose fails, check the network is normal')"
+      rm -f /tmp/docker-compose
       exit 1
     }
   else
@@ -48,37 +52,24 @@ function prepare_compose_bin() {
   if [[ ! -d "$BASE_DIR/docker" ]]; then
     mkdir -p "${BASE_DIR}/docker"
   fi
-  cp /tmp/docker-compose docker/
+  \cp -rf /tmp/docker-compose docker/
   chown -R root:root docker
   chmod +x docker/*
   export PATH=$PATH:$(pwd)/docker
 }
 
 function prepare_image_files() {
-  if ! pgrep -f "docker" > /dev/null; then
+  if ! pgrep -f "docker" >/dev/null; then
     echo "$(gettext 'Docker is not running, please install and start') ..."
     exit 1
   fi
 
-  scope="public"
-  if [[ "${USE_XPACK}" == "1" ]]; then
-    scope="all"
-  fi
-  images=$(get_images $scope)
-  if [[ ! "${DOCKER_IMAGE_PREFIX}" ]]; then
-    DOCKER_IMAGE_PREFIX=registry.cn-qingdao.aliyuncs.com
-  fi
-  i=0
+  images=$(get_images)
+
   for image in ${images}; do
-    ((i++)) || true
     echo "[${image}]"
-    if [[ -n "${DOCKER_IMAGE_PREFIX}" && $(image_has_prefix "${image}") == "0" ]]; then
-      docker pull "${DOCKER_IMAGE_PREFIX}/${image}"
-      docker tag "${DOCKER_IMAGE_PREFIX}/${image}" "${image}"
-      docker rmi -f "${DOCKER_IMAGE_PREFIX}/${image}"
-    else
-      docker pull "${image}"
-    fi
+    pull_image "$image"
+
     filename=$(basename "${image}").tar
     component=$(echo "${filename}" | awk -F: '{ print $1 }')
     md5_filename=$(basename "${image}").md5
@@ -95,7 +86,7 @@ function prepare_image_files() {
     if [[ ${image_id} != "${saved_id}" ]]; then
       rm -f ${IMAGE_DIR}/${component}*
       image_path="${IMAGE_DIR}/${filename}"
-      echo "$(gettext 'Save Image') ${image} -> ${image_path}"
+      echo "$(gettext 'Save image') ${image} -> ${image_path}"
       docker save -o "${image_path}" "${image}" && echo "${image_id}" >"${md5_path}"
     else
       echo "$(gettext 'The image has been saved, skipping'): ${image}"

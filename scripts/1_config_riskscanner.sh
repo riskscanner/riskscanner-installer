@@ -1,15 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-# shellcheck source=./util.sh
+
 . "${BASE_DIR}/utils.sh"
 
 function set_volume_dir() {
   echo_yellow "1. $(gettext 'Configure Persistent Directory')"
-  volume_dir=$(get_config VOLUME_DIR)
-  if [[ -z "${volume_dir}" ]]; then
-    volume_dir="/opt/riskscanner"
-  fi
+  volume_dir=$(get_config VOLUME_DIR "/opt/riskscanner")
   confirm="n"
   read_from_input confirm "$(gettext 'Do you need custom persistent store, will use the default directory') ${volume_dir}?" "y/n" "${confirm}"
   if [[ "${confirm}" == "y" ]]; then
@@ -43,6 +40,7 @@ function set_volume_dir() {
   if [[ ! -f "${volume_dir}/conf/mysql/sql" ]]; then
     cp "${PROJECT_DIR}/config_init/mysql/riskscanner.sql" "${volume_dir}/conf/mysql/sql"
   fi
+  chmod 644 -R "${volume_dir}/conf"
   echo_done
 }
 

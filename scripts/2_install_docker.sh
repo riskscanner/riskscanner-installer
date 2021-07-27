@@ -1,10 +1,8 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
+#
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-# shellcheck source=./util.sh
-. "${BASE_DIR}/utils.sh"
 
-# shellcheck source=./0_prepare.sh
+. "${BASE_DIR}/utils.sh"
 . "${BASE_DIR}/0_prepare.sh"
 
 DOCKER_CONFIG="/etc/docker/daemon.json"
@@ -13,13 +11,8 @@ docker_copy_failed=0
 cd "${BASE_DIR}" || exit 1
 
 function copy_docker() {
-  \cp -f ./docker/* /usr/bin/ \
-  && \cp -f ./docker.service /etc/systemd/system/ \
-  && chmod +x /usr/bin/docker* \
-  && chmod 754 /etc/systemd/system/docker.service
-  if [[ "$?" != "0" ]]; then
-    docker_copy_failed=1
-  fi
+  \cp -f ./docker/* /usr/bin/
+  \cp -f ./docker.service /etc/systemd/system/
 }
 
 function install_docker() {
@@ -51,12 +44,6 @@ function install_docker() {
       copy_docker
     fi
   fi
-
-  if [[ "${docker_copy_failed}" != "0" ]]; then
-    echo_red "$(gettext 'Docker file copy failed. May be that docker service is already running. Please stop the running docker and re-execute it')"
-    echo_red "systemctl stop docker"
-    exit 1
-  fi
 }
 
 function install_compose() {
@@ -72,7 +59,7 @@ function install_compose() {
 }
 
 function check_docker_install() {
-  command -v docker > /dev/null || {
+  command -v docker >/dev/null || {
     if command -v dnf >/dev/null; then
       if [[ -f "/etc/redhat-release" ]]; then
         if ! command -v docker >/dev/null; then
@@ -90,7 +77,7 @@ function check_docker_install() {
 }
 
 function check_compose_install() {
-  command -v docker-compose > /dev/null || {
+  command -v docker-compose >/dev/null || {
     install_compose
   }
   echo_done
@@ -137,10 +124,7 @@ f.close()
 }
 
 function config_docker() {
-  docker_storage_path=$(get_config DOCKER_DIR)
-  if [[ -z "${docker_storage_path}" ]]; then
-    docker_storage_path="/var/lib/docker"
-  fi
+  docker_storage_path=$(get_config DOCKER_DIR "/var/lib/docker")
   confirm="n"
   read_from_input confirm "$(gettext 'Do you need custom docker root dir, will use the default directory') ${docker_storage_path}?" "y/n" "${confirm}"
 
@@ -177,7 +161,7 @@ function check_docker_config() {
 }
 
 function start_docker() {
-  if command -v systemctl > /dev/null; then
+  if command -v systemctl >/dev/null; then
     systemctl daemon-reload
     systemctl enable docker
     systemctl start docker
@@ -205,7 +189,7 @@ function check_docker_compose() {
 
 function main() {
   if [[ "${OS}" == 'Darwin' ]]; then
-    echo "$(gettext 'Skip docker installation on macOS')"
+    echo "$(gettext 'Skip docker installation on MacOS')"
     return
   fi
   echo_yellow "1. $(gettext 'Install Docker')"

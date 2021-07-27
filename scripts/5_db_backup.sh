@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-# shellcheck source=./util.sh
+
 . "${BASE_DIR}/utils.sh"
 VOLUME_DIR=$(get_config VOLUME_DIR)
 BACKUP_DIR="${VOLUME_DIR}/db_backup"
@@ -14,13 +15,13 @@ DATABASE=$(get_config DB_NAME)
 DB_FILE=${BACKUP_DIR}/${DATABASE}-${CURRENT_VERSION}-$(date +%F_%T).sql
 
 function main() {
-  docker_network_check
   if [[ ! -d ${BACKUP_DIR} ]]; then
     mkdir -p ${BACKUP_DIR}
   fi
 
   echo "$(gettext 'Backing up')..."
 
+  docker_network_check
   backup_cmd="mysqldump --host=${HOST} --port=${PORT} --user=${USER} --password=${PASSWORD} ${DATABASE}"
   if ! docker run --rm -i --network=rs_default x-lab/mysql:5.7.31 ${backup_cmd} > "${DB_FILE}"; then
     log_error "$(gettext 'Backup failed')!"

@@ -41,7 +41,37 @@ function has_config() {
 
 function get_config() {
   key=$1
+  default=${2-''}
   value=$(grep "^${key}=" "${CONFIG_FILE}" | awk -F= '{ print $2 }')
+  if [[ -z "$value" ]];then
+    value="$default"
+  fi
+  echo "${value}"
+}
+
+function get_env_value() {
+  key=$1
+  default=${2-''}
+  value=$(env | grep "$key=" | awk -F= '{ print $2 }')
+
+  echo "${value}"
+}
+
+function get_config_or_env() {
+  key=$1
+  value=''
+  default=${2-''}
+  if [[ -f "${CONFIG_FILE}" ]];then
+    value=$(get_config "$key")
+  fi
+
+  if [[ -z "$value" ]];then
+    value=$(get_env_value "$key")
+  fi
+
+  if [[ -z "$value" ]];then
+    value="$default"
+  fi
   echo "${value}"
 }
 
@@ -78,10 +108,12 @@ function test_mysql_connect() {
 }
 
 function get_images() {
-  scope="all"
-  if [[ -n "$1" ]]; then
-    scope="$1"
+  USE_XPACK=$(get_config_or_env '0')
+  scope="public"
+  if [[ "$USE_XPACK" == "1" ]];then
+    scope="all"
   fi
+
   images=(
     "x-lab/mysql:5.7.31"
     "x-lab/riskscanner:${VERSION}"
@@ -197,7 +229,6 @@ function install_required_pkg() {
   if command -v dnf >/dev/null; then
     if [ "$required_pkg" == "python" ]; then
       dnf -q -y install python2
-      ln -s /usr/bin/python2 /usr/bin/python
     else
       dnf -q -y install "$required_pkg"
     fi
@@ -238,7 +269,8 @@ function prepare_set_redhat_firewalld() {
         fi
       fi
       if [[ "$flag" ]]; then
-          firewall-cmd --reload >/dev/null
+        firewall-cmd --reload >/dev/null
+        unset flag
       fi
     fi
   fi
@@ -268,6 +300,7 @@ function prepare_config() {
   if [[ ! -f "./compose/.env" ]]; then
     ln -s "${CONFIG_FILE}" ./compose/.env
   fi
+  chmod 644 -R "${CONFIG_DIR}"
   echo_done
 
   backup_dir="${CONFIG_DIR}/backup"
@@ -322,4 +355,36 @@ function set_current_version(){
   if [ "${current_version}" != "${VERSION}" ]; then
     set_config CURRENT_VERSION "${VERSION}"
   fi
+}
+
+function pull_image(){
+  image=$1
+  DOCKER_IMAGE_PREFIX=$(get_config_or_env 'DOCKER_IMAGE_PREFIX')
+  IMAGE_PULL_POLICY=${IMAGE_PULL_POLICY-"Always"}
+
+  docker image inspect -f '{{ .Id }}' "$image" &> /dev/null
+  exits=$?
+
+  if [[ "$exits" == "0" && "$IMAGE_PULL_POLICY" != "Always" ]];then
+    echo "Image exist, pass"
+    return
+  fi
+
+  if [[ -n "${DOCKER_IMAGE_PREFIX}" && $(image_has_prefix "${image}") == "0" ]]; then
+    docker pull "${DOCKER_IMAGE_PREFIX}/${image}"
+    docker tag "${DOCKER_IMAGE_PREFIX}/${image}" "${image}"
+    docker rmi -f "${DOCKER_IMAGE_PREFIX}/${image}"
+  else
+    docker pull "${image}"
+  fi
+  echo ""
+}
+
+function pull_images() {
+  images_to=$(get_images)
+
+  for image in ${images_to}; do
+    echo "[${image}]"
+    pull_image "$image"
+  done
 }
