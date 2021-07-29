@@ -104,10 +104,11 @@ function restart() {
 }
 
 function check_update() {
-  current_version="${VERSION}"
+  current_version=$(get_current_version)
   latest_version=$(get_latest_version)
   if [[ "${current_version}" == "${latest_version}" ]]; then
-    echo "$(gettext 'The current version is up to date')"
+    echo_green "$(gettext 'The current version is up to date'): ${latest_version}"
+    echo
     return
   fi
   if [[ -n "${latest_version}" ]] && [[ ${latest_version} =~ v.* ]]; then
@@ -130,8 +131,8 @@ function check_update() {
     }
   fi
   cd "${Install_DIR}/riskscanner-installer-${latest_version}" || exit 1
-  echo
   ./rsctl.sh upgrade "${latest_version}"
+  ln -sf /usr/bin/rsctl "${PROJECT_DIR}/rsctl.sh"
 }
 
 function main() {
@@ -214,6 +215,9 @@ function main() {
       ;;
     raw)
       ${EXE} "${args[@]:1}"
+      ;;
+    version)
+      get_current_version
       ;;
     help)
       usage
