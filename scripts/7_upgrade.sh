@@ -18,6 +18,8 @@ function upgrade_config() {
   if [[ "${SHELL}" == "/bin/bash" ]]; then
     if grep -q "alias rsctl=" ~/.bashrc; then
       sed -i 's@alias rsctl=.*@@g' ~/.bashrc
+      unalias rsctl
+      . ~/.bashrc
     fi
   fi
 }
@@ -30,16 +32,10 @@ function update_config_if_need() {
 function backup_db() {
   docker_network_check
   if docker ps | grep rs_scanner >/dev/null; then
-    confirm="n"
-    read_from_input confirm "$(gettext 'Detected that the RiskScanner container is running. Do you want to close the container and continue to upgrade')?" "y/n" "${confirm}"
-    if [[ "${confirm}" == "y" ]]; then
       docker stop rs_scanner
       docker rm rs_scanner
       sleep 2s
       echo
-    else
-      exit 1
-    fi
   fi
   if [[ "${SKIP_BACKUP_DB}" != "1" ]]; then
     if ! bash "${SCRIPT_DIR}/5_db_backup.sh"; then
@@ -55,12 +51,10 @@ function backup_db() {
 }
 
 function clear_images() {
+  current_version=$(get_config CURRENT_VERSION)
   if [[ "${current_version}" != "${to_version}" ]]; then
     confirm="n"
-    read_from_input confirm "$(gettext 'Do you need to clean up the old version image')?" "y/n" "${confirm}"
-    if [[ "${confirm}" == "y" ]]; then
-      docker images | grep x-lab/ | grep "${current_version}" | awk '{print $3}' | xargs docker rmi -f
-    fi
+    docker images | grep x-lab/ | grep "${current_version}" | awk '{print $3}' | xargs docker rmi -f
   fi
   echo_done
 }
@@ -71,12 +65,6 @@ function main() {
   if [[ -n "${target}" ]]; then
     to_version="${target}"
   fi
-
-  read_from_input confirm "$(gettext 'Are you sure you want to update the current version to') ${to_version} ?" "y/n" "${confirm}"
-  if [[ "${confirm}" != "y" || -z "${to_version}" ]]; then
-    exit 3
-  fi
-
   if [[ "${to_version}" && "${to_version}" != "${VERSION}" ]]; then
     sed -i "s@VERSION=.*@VERSION=${to_version}@g" "${PROJECT_DIR}/static.env"
     export VERSION=${to_version}
@@ -96,8 +84,10 @@ function main() {
   echo_yellow "\n6. $(gettext 'Upgrade successfully. You can now restart the program')"
   echo "cd ${PROJECT_DIR}"
   echo "./rsctl.sh start"
-  echo -e "\n"
   set_current_version
+
+  cd ${PROJECT_DIR} || exit 1
+  ./rsctl.sh start
 }
 
 if [[ "$0" == "${BASH_SOURCE[0]}" ]]; then
