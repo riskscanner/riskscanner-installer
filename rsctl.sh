@@ -132,7 +132,6 @@ function check_update() {
   fi
   cd "${Install_DIR}/riskscanner-installer-${latest_version}" || exit 1
   ./rsctl.sh upgrade "${latest_version}"
-  ln -sf /usr/bin/rsctl "${PROJECT_DIR}/rsctl.sh"
 }
 
 function main() {

@@ -219,7 +219,7 @@ function get_docker_compose_cmd_line() {
   cmd="docker-compose -f ./compose/docker-compose-app.yml"
   services=$(get_docker_compose_services "$ignore_db")
   if [[ "${services}" =~ mysql ]]; then
-    cmd="${cmd} -f ./compose/docker-compose-mysql.yml -f ./compose/docker-compose-mysql-internal.yml"
+    cmd="${cmd} -f ./compose/docker-compose-mysql.yml"
   fi
   echo "${cmd}"
 }
